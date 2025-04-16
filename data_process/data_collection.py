@@ -1,3 +1,51 @@
+"""
+data_collection.py - Reddit Comment Collection Script
+
+This script collects comments from various Reddit subreddits, focusing on pet-related
+communities. It gathers a large dataset of comments for analysis and extracts a subset
+of adoption-related content. The script performs the following operations:
+
+1. API Authentication and Connection:
+  - Loads Reddit API credentials from an environment file
+  - Establishes a connection to the Reddit API using PRAW library
+
+2. Data Collection Configuration:
+  - Targets 10 pet-related subreddits including: "cats", "dogs", "CatAdvice", 
+    "DogAdvice", "PetAdvice", "Adoptapet", "AdoptMyPet", "puppyAdoption", 
+    "rescuedogs", and "aww"
+  - Processes up to 2000 submissions per subreddit
+  - Outputs progress updates every 100 posts
+
+3. Comment Collection Process:
+  - Retrieves top-level comments from hot posts in each subreddit
+  - Extracts metadata including: subreddit name, post ID, post title, comment ID,
+    comment body, score, creation time, and permalink
+  - Skips removed or deleted comments
+  - Implements rate limiting (1 second delay between requests)
+
+4. Adoption Content Filtering:
+  - Maintains a list of adoption-related keywords (e.g., "adopt", "rehome", "rescue")
+  - Filters collected comments to identify those discussing animal adoption
+  - Creates a specialized subset of adoption-related content
+
+5. Data Storage:
+  - Creates a directory structure for organizing the collected data
+  - Saves the complete comment dataset as a CSV file
+  - Saves the filtered adoption-related comments as a separate CSV file
+
+6. Error Handling:
+  - Implements exception handling to manage API errors
+  - Continues collection despite issues with individual posts or subreddits
+
+Files:
+   Output:
+       - all_comments.csv: Complete dataset of all comments
+       - adoption_comments.csv: Filtered dataset of adoption-related comments
+
+Note: Unlike some other scripts, this collector doesn't separate cat and dog content,
+instead gathering all pet-related comments into a unified dataset.
+"""
+
 import os
 import praw
 import pandas as pd
@@ -18,8 +66,8 @@ subreddits = [
     "cats", "dogs", "CatAdvice", "DogAdvice", "PetAdvice",
     "Adoptapet", "AdoptMyPet", "puppyAdoption", "rescuedogs", "aww"
 ]
-num_submissions_per_sub = 2000  # 控制每个 subreddit 抓多少贴
-print_interval = 100  # 每抓几个帖子打印一次进度
+num_submissions_per_sub = 2000  
+print_interval = 100  
 
 # ===== Step 3: Adoption-related keyword list =====
 adoption_keywords = [
