@@ -1,0 +1,14 @@
+Feature,Coefficient
+contains_adopt_keywords,656.1791483248043
+num_exclamations,77.71520592230735
+num_verbs,11.954578292229016
+title_length,10.983180750013151
+num_words,-1.8866010968155216
+num_adjectives,-4.460449637778012
+num_lines,-5.742395741695349
+num_emojis,-53.13490580178451
+sentiment_score,-157.4146501568994
+has_urgency_words,-911.8068524233959
+contains_money,-1229.8096517499355
+has_question,-1349.592548882905
+has_pronouns,-2377.8662004832577
