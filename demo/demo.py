@@ -13,7 +13,9 @@ nltk.download("stopwords")
 nltk.download("averaged_perceptron_tagger")
 
 stop_words = set(stopwords.words("english"))
-nlp = spacy.load("en_core_web_sm")
+
+# ✅ 使用更准确的中型词向量模型
+nlp = spacy.load("en_core_web_md")
 
 
 def tokenize(text):
