@@ -1,0 +1,152 @@
+import os
+import re
+import emoji
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.model_selection import train_test_split
+
+def run_regression_analysis(data_dir="data", save_dir="src/img"):
+    print("Running: Engagement Regression Analysis...")
+    os.makedirs(save_dir, exist_ok=True)
+
+    # === Load Data ===
+    cats_posts = pd.read_csv(f"{data_dir}/cats_all_post_processed.csv")
+    dogs_posts = pd.read_csv(f"{data_dir}/dogs_all_posts_processed.csv")
+    cats_comments = pd.read_csv(f"{data_dir}/cats_all_comments_processed.csv")
+    dogs_comments = pd.read_csv(f"{data_dir}/dogs_all_comments_processed.csv")
+
+    # === Posts: Feature Engineering ===
+    for df in [cats_posts, dogs_posts]:
+        df["engagement_score"] = df["score"] + 0.5 * df["num_comments"]
+        df["num_adjectives"] = df["adjectives"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
+        df["num_verbs"] = df["verbs"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
+        df["num_emojis"] = df["cleaned_text"].apply(lambda x: sum(1 for c in str(x) if c in emoji.EMOJI_DATA))
+        df["has_urgency_words"] = df["cleaned_text"].apply(lambda x: int(any(word in str(x).lower() for word in urgency_keywords)))
+        df["has_pronouns"] = df["cleaned_text"].apply(lambda x: int(any(p in str(x).lower() for p in pronouns)))
+        df["title_length"] = df["title"].apply(lambda x: len(str(x)))
+        df["contains_money"] = df["cleaned_text"].apply(contains_money)
+        df["num_lines"] = df["selftext"].apply(lambda x: str(x).count("\n"))
+
+    # === Run regression on posts ===
+    analyze_engagement(cats_posts, label="Cats", save_dir=save_dir)
+    analyze_engagement(dogs_posts, label="Dogs", save_dir=save_dir)
+
+    # === Comments: Preprocessing and Analysis ===
+    cats_comments = preprocess_comments(cats_comments)
+    dogs_comments = preprocess_comments(dogs_comments)
+
+    analyze_comment_engagement(cats_comments, label="Cats Comments", save_dir=save_dir)
+    analyze_comment_engagement(dogs_comments, label="Dogs Comments", save_dir=save_dir)
+
+
+# === Constants ===
+urgency_keywords = ["urgent", "emergency", "last chance", "help", "please"]
+pronouns = ["you", "your", "we", "us"]
+
+
+# === Helper Functions ===
+
+def contains_money(text):
+    money_keywords = ["donation", "donate", "pledge", "$", "fund", "raise"]
+    text = str(text).lower()
+    return int(any(kw in text for kw in money_keywords) or bool(re.search(r"\$\d+", text)))
+
+
+def analyze_engagement(posts_df, label="Posts", save_dir="src/img"):
+    feature_columns = [
+        "sentiment_score", "num_adjectives", "num_verbs",
+        "num_exclamations", "has_question", "num_emojis",
+        "contains_adopt_keywords", "num_words", "has_urgency_words", "has_pronouns",
+        "title_length", "contains_money", "num_lines"
+    ]
+
+    df_model = posts_df.dropna(subset=["engagement_score"] + feature_columns).copy()
+    X = df_model[feature_columns]
+    y = df_model["engagement_score"]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+
+    print(f"\n📈 Linear Regression Performance for {label}:")
+    print(f"RMSE: {rmse:.2f}")
+    print(f"R²: {r2:.3f}")
+
+    coef_df = pd.DataFrame({
+        "Feature": feature_columns,
+        "Coefficient": model.coef_
+    }).sort_values(by="Coefficient", ascending=False)
+
+    print("\n📊 Feature Coefficients:")
+    print(coef_df)
+    coef_df.to_csv(f"{save_dir}/{label.lower().replace(' ', '_')}_feature_coefficients.csv", index=False)
+
+    plt.figure(figsize=(10, 6))
+    plt.barh(coef_df["Feature"], coef_df["Coefficient"])
+    plt.xlabel("Coefficient")
+    plt.title(f"{label}: Feature Importance (Linear Regression)")
+    plt.gca().invert_yaxis()
+    plt.tight_layout()
+    plt.savefig(f"{save_dir}/{label.lower().replace(' ', '_')}_feature_importance.png", dpi=300)
+    plt.close()
+
+
+def preprocess_comments(df):
+    df["num_adjectives"] = df["adjectives"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
+    df["num_verbs"] = df["verbs"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
+    df["num_emojis"] = df["cleaned_text"].apply(lambda x: sum(1 for c in str(x) if c in emoji.EMOJI_DATA))
+    df["has_urgency_words"] = df["cleaned_text"].apply(lambda x: int(any(word in str(x).lower() for word in urgency_keywords)))
+    df["has_pronouns"] = df["cleaned_text"].apply(lambda x: int(any(p in str(x).lower() for p in pronouns)))
+    return df
+
+
+def analyze_comment_engagement(df, label="Comments", save_dir="src/img"):
+    feature_columns = [
+        "sentiment_score", "num_adjectives", "num_verbs",
+        "num_exclamations", "has_question", "num_emojis",
+        "contains_adopt_keywords", "has_urgency_words",
+        "has_pronouns", "num_words"
+    ]
+
+    df_model = df.dropna(subset=["score"] + feature_columns).copy()
+    X = df_model[feature_columns]
+    y = df_model["score"]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+
+    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+    r2 = r2_score(y_test, y_pred)
+
+    print(f"\n📈 Linear Regression Performance for {label}:")
+    print(f"RMSE: {rmse:.2f}")
+    print(f"R²: {r2:.3f}")
+
+    coef_df = pd.DataFrame({
+        "Feature": feature_columns,
+        "Coefficient": model.coef_
+    }).sort_values(by="Coefficient", ascending=False)
+
+    print("\n📊 Feature Coefficients:")
+    print(coef_df)
+    coef_df.to_csv(f"{save_dir}/{label.lower().replace(' ', '_')}_comment_feature_coefficients.csv", index=False)
+
+    plt.figure(figsize=(10, 6))
+    plt.barh(coef_df["Feature"], coef_df["Coefficient"])
+    plt.xlabel("Coefficient")
+    plt.title(f"{label}: Feature Importance (Linear Regression)")
+    plt.gca().invert_yaxis()
+    plt.tight_layout()
+    plt.savefig(f"{save_dir}/{label.lower().replace(' ', '_')}_comment_feature_importance.png", dpi=300)
+    plt.close()

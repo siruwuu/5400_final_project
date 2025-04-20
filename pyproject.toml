@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reddit-engagement-analyzer"
+version = "0.1.0"
+description = "This study explores how various linguistic features—beyond just adjectives—are associated with user engagement in Reddit posts related to pet adoption. "
+authors = [
+  { name = "Jiahui Liu", email = "your@email.com" }
+]
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+  "pandas",
+  "numpy",
+  "matplotlib",
+  "scikit-learn",
+  "emoji",
+  "pytest",
+  "xgboost"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "jupyter",
+  "black",
+  "ruff"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

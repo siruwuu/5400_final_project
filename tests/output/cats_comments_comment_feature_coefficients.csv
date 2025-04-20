@@ -1,0 +1,11 @@
+Feature,Coefficient
+contains_adopt_keywords,23.17180364323185
+num_exclamations,4.1184129522593915
+num_adjectives,0.3275487245469071
+num_words,-0.052367361875716
+num_verbs,-0.5072402620187842
+num_emojis,-0.5495226169054217
+sentiment_score,-0.7182263793589065
+has_pronouns,-9.468464908706453
+has_question,-27.611963325505396
+has_urgency_words,-29.346461161823036
