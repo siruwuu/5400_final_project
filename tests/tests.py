@@ -20,7 +20,7 @@ def test_classification_analysis_runs():
     Smoke test: ensures classification pipeline runs on test data without error.
     """
     try:
-        run_engagement_classification(data_dir="tests/data", save_dir="tests/output")
+        run_engagement_classification(data_dir="tests/data", save_dir="tests/output", save_model=False )
     except Exception as e:
         pytest.fail(f"Classification analysis failed with exception: {e}")
 
@@ -40,3 +40,5 @@ def test_output_formats_are_png():
     image_files = [f for f in os.listdir("tests/output") if f.endswith(".png")]
     assert len(image_files) > 0, "No .png output found in tests/output"
 
+def test_pipeline_no_save():
+    run_engagement_classification(save_model=False)
