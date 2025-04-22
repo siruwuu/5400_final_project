@@ -1,6 +1,6 @@
 .env
 data/
 .pytest_cache
-tests/__pycache__
-mod/__pycache__
 src/*.egg-info
+*.pyc 
+__pycache__/

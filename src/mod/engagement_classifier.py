@@ -5,13 +5,13 @@ import emoji
 import pickle
 import pandas as pd
 import numpy as np
+import inspect
 import matplotlib.pyplot as plt
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier
-from nltk.sentiment import SentimentIntensityAnalyzer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     classification_report,
@@ -21,7 +21,7 @@ from sklearn.metrics import (
 )
 
 
-def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir="model", save_model=True):
+def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir="src/gpt_classifier_suggester/model", save_model=True):
     # === Load and preprocess ===
     cats_posts = pd.read_csv(f"{data_dir}/cats_all_post_processed.csv")
     dogs_posts = pd.read_csv(f"{data_dir}/dogs_all_posts_processed.csv")
@@ -68,7 +68,7 @@ def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir
     cats_posts = label_high_engagement(cats_posts)
     dogs_posts = label_high_engagement(dogs_posts)
 
-    def run_classifier(df, label="Posts", model="logistic", save_prefix="cats"):
+    def run_classifier(df, label="Posts", model="logistic", save_prefix="cats", save_model=True):
         structured_features = [
             "sentiment_score", "num_adjectives", "num_verbs", 
             "num_exclamations", "has_question", "num_emojis", 
@@ -145,55 +145,18 @@ def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir
             plt.savefig(f"{save_dir}/{save_prefix}_{model}_feature_importance.png", dpi=300)
             plt.show()
 
-        if save_model:
-            os.makedirs(model_dir, exist_ok=True)
-            with open(f"{model_dir}/{save_prefix}_{model}_pipeline.pkl", "wb") as f:
-                pickle.dump(pipeline, f)
-
-    run_classifier(cats_posts, label="Cats (Logistic)", model="logistic", save_prefix="cats")
-    run_classifier(dogs_posts, label="Dogs (Logistic)", model="logistic", save_prefix="dogs")
-    run_classifier(cats_posts, label="Cats (RF)", model="rf", save_prefix="cats")
-    run_classifier(dogs_posts, label="Dogs (RF)", model="rf", save_prefix="dogs")
-
-
-# ---------------- Prediction Function for Demo ----------------
-def run_text_prediction(text: str, model_path="model/cats_rf_pipeline.pkl") -> tuple[int, float]:
-    """
-    Load pipeline and predict engagement label and probability from raw input text.
-    """
-    # Minimal preprocessing consistent with training pipeline
-    df = pd.DataFrame({
-        "cleaned_text": [text],
-        "title": [text],
-        "selftext": [text],
-        "adjectives": ["[]"],
-        "verbs": ["[]"],
-        "score": [0],
-        "num_comments": [0],
-        "num_exclamations": [text.count("!")],
-        "has_question": [int("?" in text)],
-        "contains_adopt_keywords": [int("adopt" in text.lower())],
-        "num_words": [len(text.split())]
-    })
-
-    urgency_keywords = ["urgent", "emergency", "last chance", "help", "please"]
-    pronouns = ["you", "your", "we", "us"]
-
-    df["num_adjectives"] = 0
-    df["num_verbs"] = 0
-    df["num_emojis"] = df["cleaned_text"].apply(lambda x: sum(1 for c in str(x) if c in emoji.EMOJI_DATA))
-    df["has_urgency_words"] = df["cleaned_text"].apply(lambda x: int(any(word in str(x).lower() for word in urgency_keywords)))
-    df["has_pronouns"] = df["cleaned_text"].apply(lambda x: int(any(p in str(x).lower() for p in pronouns)))
-    df["title_length"] = df["title"].apply(lambda x: len(str(x)))
-    df["contains_money"] = df["cleaned_text"].apply(lambda x: int(bool(re.search(r"\$\d+", x))))
-    df["num_lines"] = df["selftext"].apply(lambda x: str(x).count("\n"))
-
-    sia = SentimentIntensityAnalyzer()
-    df["sentiment_score"] = df["cleaned_text"].apply(lambda x: sia.polarity_scores(str(x))["compound"])
-
-    with open(model_path, "rb") as f:
-        pipeline = pickle.load(f)
-
-    prob = pipeline.predict_proba(df)[0][1]
-    label = int(prob >= 0.5)
-    return label, prob
+            if save_model:
+                current_file_path = os.path.abspath(inspect.getfile(inspect.currentframe()))
+                project_root = os.path.abspath(os.path.join(current_file_path, "../../.."))
+                model_dir_absolute = os.path.join(project_root, model_dir)
+                os.makedirs(model_dir_absolute, exist_ok=True)
+                model_path = os.path.join(model_dir_absolute, f"{save_prefix}_{model}_pipeline.pkl")
+                
+                with open(model_path, "wb") as f:
+                    pickle.dump(pipeline, f)
+                    print(f"✅ Saved model to: {model_path}")
+    # === Run All ===
+    run_classifier(cats_posts, label="Cats (Logistic)", model="logistic", save_prefix="cats", save_model=save_model)
+    run_classifier(dogs_posts, label="Dogs (Logistic)", model="logistic", save_prefix="dogs", save_model=save_model)
+    run_classifier(cats_posts, label="Cats (RF)", model="rf", save_prefix="cats", save_model=save_model)
+    run_classifier(dogs_posts, label="Dogs (RF)", model="rf", save_prefix="dogs", save_model=save_model)
