@@ -4,25 +4,25 @@ import spacy
 from nltk.corpus import stopwords
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-# ========== 初始化 ==========
+# Initialization
 nlp = spacy.load("en_core_web_sm")
 vader = SentimentIntensityAnalyzer()
 stop_words = set(stopwords.words("english"))
 
-# ========== 自定义关键词 ==========
+# Define keywords
 ADOPTION_KEYWORDS = [
     "adopt", "adoption", "adopted", "rescue", "rescued", "rehome", "shelter", "foster"
 ]
 
-# ========== 文本清洗函数 ==========
+# Text cleaning function
 def clean_text(text):
     text = str(text).lower()
-    text = re.sub(r"http\S+|www\S+", "", text)  # 移除链接
-    text = re.sub(r"\[.*?\]\(.*?\)", "", text)  # 移除 markdown 链接
-    text = re.sub(r"\s+", " ", text).strip()    # 移除多余空格
+    text = re.sub(r"http\S+|www\S+", "", text)  # Remove hyperlinks
+    text = re.sub(r"\[.*?\]\(.*?\)", "", text)  # Remove markdown syntax
+    text = re.sub(r"\s+", " ", text).strip()    # Remove whitespace
     return text
 
-# ========== 特征提取函数 ==========
+# Feature extraction
 def extract_features(row):
     text = row["body"]
     doc = nlp(text)
@@ -43,7 +43,6 @@ def extract_features(row):
         "verbs": verbs
     })
 
-# ========== 主处理函数 ==========
 def preprocess_comments(df):
     df["body"] = df["body"].astype(str).apply(clean_text)
     features = df.apply(extract_features, axis=1)
