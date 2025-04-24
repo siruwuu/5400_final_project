@@ -5,12 +5,15 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "reddit-engagement-analyzer"
 version = "0.1.0"
-description = "This study explores how various linguistic features—beyond just adjectives—are associated with user engagement in Reddit posts related to pet adoption. "
-authors = [
-  { name = "Jiahui Liu", email = "your@email.com" }
-]
+description = "This project analyzes how different linguistic features—beyond just adjectives—affect user engagement in Reddit pet adoption posts, and builds tools to improve post effectiveness."
 readme = "README.md"
 requires-python = ">=3.9"
+
+authors = [
+  { name = "Jiahui Liu", email = "jiahui@example.com" },
+  { name = "Siru Wu", email = "sw1430@georgetown.edu" }
+]
+
 dependencies = [
   "pandas",
   "numpy",
@@ -18,14 +21,13 @@ dependencies = [
   "scikit-learn",
   "emoji",
   "pytest",
-  "xgboost"
+  "xgboost",
+  "nltk",
+  "spacy",
+  "streamlit",
+  "python-dotenv",
+  "shap"
 ]
-
-[tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
 
 [project.optional-dependencies]
 dev = [
@@ -34,6 +36,12 @@ dev = [
   "black",
   "ruff"
 ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]
