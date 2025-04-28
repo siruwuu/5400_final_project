@@ -1,0 +1,320 @@
+2025-04-28 06:34:30,399 - INFO - 🔁 Running Engagement Classification...
+2025-04-28 06:34:30,399 - INFO - 🚀 Starting run_engagement_classification
+2025-04-28 06:34:31,259 - INFO - ✅ Successfully loaded cat and dog posts.
+2025-04-28 06:34:33,085 - INFO - 🚦 Start running classifier: Cats (Logistic) (logistic)
+2025-04-28 06:34:34,031 - INFO - 📊 Classification Report for Cats (Logistic):
+              precision    recall  f1-score   support
+
+         0.0       0.83      0.91      0.87       691
+         1.0       0.78      0.64      0.70       345
+
+    accuracy                           0.82      1036
+   macro avg       0.81      0.77      0.79      1036
+weighted avg       0.82      0.82      0.81      1036
+
+2025-04-28 06:34:34,033 - INFO - Confusion Matrix:
+[[628  63]
+ [125 220]]
+2025-04-28 06:34:34,036 - INFO - ROC-AUC Score: 0.8782
+2025-04-28 06:34:35,230 - INFO - ✅ Saved ROC curve to /Users/jiahuiliu/5400_final_project-4/src/img/cats_logistic_roc.png
+2025-04-28 06:34:35,234 - INFO - ✅ Saved model pipeline to /Users/jiahuiliu/5400_final_project-4/gpt_classifier_suggester/model/cats_logistic_pipeline.pkl
+2025-04-28 06:34:35,279 - INFO - 🚦 Start running classifier: Dogs (Logistic) (logistic)
+2025-04-28 06:34:36,182 - INFO - 📊 Classification Report for Dogs (Logistic):
+              precision    recall  f1-score   support
+
+         0.0       0.84      0.86      0.85       653
+         1.0       0.71      0.66      0.69       325
+
+    accuracy                           0.80       978
+   macro avg       0.77      0.76      0.77       978
+weighted avg       0.79      0.80      0.80       978
+
+2025-04-28 06:34:36,183 - INFO - Confusion Matrix:
+[[564  89]
+ [109 216]]
+2025-04-28 06:34:36,184 - INFO - ROC-AUC Score: 0.8543
+2025-04-28 06:34:36,341 - INFO - ✅ Saved ROC curve to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_logistic_roc.png
+2025-04-28 06:34:36,342 - INFO - ✅ Saved model pipeline to /Users/jiahuiliu/5400_final_project-4/gpt_classifier_suggester/model/dogs_logistic_pipeline.pkl
+2025-04-28 06:34:36,343 - INFO - 🚦 Start running classifier: Cats (RF) (rf)
+2025-04-28 06:34:38,697 - INFO - 📊 Classification Report for Cats (RF):
+              precision    recall  f1-score   support
+
+         0.0       0.84      0.93      0.88       691
+         1.0       0.82      0.64      0.72       345
+
+    accuracy                           0.83      1036
+   macro avg       0.83      0.79      0.80      1036
+weighted avg       0.83      0.83      0.83      1036
+
+2025-04-28 06:34:38,698 - INFO - Confusion Matrix:
+[[644  47]
+ [124 221]]
+2025-04-28 06:34:38,699 - INFO - ROC-AUC Score: 0.8903
+2025-04-28 06:34:38,827 - INFO - ✅ Saved ROC curve to /Users/jiahuiliu/5400_final_project-4/src/img/cats_rf_roc.png
+2025-04-28 06:34:38,841 - INFO - 📌 Top 20 Feature Importances:
+              feature  importance
+110      title_length    0.121018
+105        num_emojis    0.049723
+109         num_words    0.046816
+102         num_verbs    0.041078
+16                cat    0.037610
+104      has_question    0.033674
+100   sentiment_score    0.028707
+101    num_adjectives    0.022212
+38               help    0.017839
+17               cats    0.016583
+2             adopted    0.016461
+103  num_exclamations    0.016283
+112         num_lines    0.016075
+111    contains_money    0.014693
+73            rescued    0.013072
+84              today    0.012625
+4            adoption    0.012094
+5              advice    0.011858
+42             kitten    0.010765
+39               home    0.010524
+2025-04-28 06:34:39,083 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/cats_rf_feature_importance.png
+2025-04-28 06:34:39,095 - INFO - ✅ Saved model pipeline to /Users/jiahuiliu/5400_final_project-4/gpt_classifier_suggester/model/cats_rf_pipeline.pkl
+2025-04-28 06:34:39,101 - INFO - 🚦 Start running classifier: Dogs (RF) (rf)
+2025-04-28 06:34:40,985 - INFO - 📊 Classification Report for Dogs (RF):
+              precision    recall  f1-score   support
+
+         0.0       0.85      0.93      0.89       653
+         1.0       0.83      0.66      0.74       325
+
+    accuracy                           0.84       978
+   macro avg       0.84      0.80      0.81       978
+weighted avg       0.84      0.84      0.84       978
+
+2025-04-28 06:34:40,986 - INFO - Confusion Matrix:
+[[608  45]
+ [110 215]]
+2025-04-28 06:34:40,987 - INFO - ROC-AUC Score: 0.9079
+2025-04-28 06:34:41,110 - INFO - ✅ Saved ROC curve to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_rf_roc.png
+2025-04-28 06:34:41,117 - INFO - 📌 Top 20 Feature Importances:
+              feature  importance
+110      title_length    0.082598
+109         num_words    0.074424
+102         num_verbs    0.074086
+101    num_adjectives    0.042971
+104      has_question    0.035464
+25                dog    0.035404
+100   sentiment_score    0.029773
+112         num_lines    0.023308
+103  num_exclamations    0.018817
+108      has_pronouns    0.016350
+73             rescue    0.016320
+86              sweet    0.013624
+105        num_emojis    0.012569
+74            rescued    0.012512
+26               dogs    0.012053
+42               just    0.011727
+3             adopted    0.011629
+82            shelter    0.011488
+59               need    0.011340
+31             foster    0.011163
+2025-04-28 06:34:41,269 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_rf_feature_importance.png
+2025-04-28 06:34:41,274 - INFO - ✅ Saved model pipeline to /Users/jiahuiliu/5400_final_project-4/gpt_classifier_suggester/model/dogs_rf_pipeline.pkl
+2025-04-28 06:40:55,944 - INFO - 🔁 Running Engagement Classification...
+2025-04-28 06:40:55,944 - INFO - 🚀 Starting run_engagement_classification...
+2025-04-28 06:40:56,688 - INFO - ✅ Successfully loaded cat and dog post datasets.
+2025-04-28 06:40:56,688 - INFO - 🔄 Preprocessing posts for cat...
+2025-04-28 06:40:57,558 - INFO - 🔄 Preprocessing posts for dog...
+2025-04-28 06:40:58,351 - INFO - 🚦 Training LOGISTIC model for Cats...
+2025-04-28 06:40:59,483 - INFO - 📊 Classification Report for Cats:
+              precision    recall  f1-score   support
+
+         0.0       0.83      0.91      0.87       691
+         1.0       0.78      0.64      0.70       345
+
+    accuracy                           0.82      1036
+   macro avg       0.81      0.77      0.79      1036
+weighted avg       0.82      0.82      0.81      1036
+
+2025-04-28 06:40:59,485 - INFO - Confusion Matrix:
+[[628  63]
+ [125 220]]
+2025-04-28 06:40:59,487 - INFO - ROC-AUC Score: 0.8782
+2025-04-28 06:41:00,364 - INFO - ✅ Saved ROC plot to /Users/jiahuiliu/5400_final_project-4/src/img/cats_logistic_roc.png
+2025-04-28 06:41:00,385 - INFO - ✅ Saved model to /Users/jiahuiliu/5400_final_project-4/src/gpt_classifier_suggester/model/cats_logistic_pipeline.pkl
+2025-04-28 06:41:00,476 - INFO - 🚦 Training LOGISTIC model for Dogs...
+2025-04-28 06:41:01,442 - INFO - 📊 Classification Report for Dogs:
+              precision    recall  f1-score   support
+
+         0.0       0.84      0.86      0.85       653
+         1.0       0.71      0.66      0.69       325
+
+    accuracy                           0.80       978
+   macro avg       0.77      0.76      0.77       978
+weighted avg       0.79      0.80      0.80       978
+
+2025-04-28 06:41:01,444 - INFO - Confusion Matrix:
+[[564  89]
+ [109 216]]
+2025-04-28 06:41:01,446 - INFO - ROC-AUC Score: 0.8543
+2025-04-28 06:41:01,532 - INFO - ✅ Saved ROC plot to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_logistic_roc.png
+2025-04-28 06:41:01,533 - INFO - ✅ Saved model to /Users/jiahuiliu/5400_final_project-4/src/gpt_classifier_suggester/model/dogs_logistic_pipeline.pkl
+2025-04-28 06:41:01,542 - INFO - 🚦 Training RF model for Cats...
+2025-04-28 06:41:03,927 - INFO - 📊 Classification Report for Cats:
+              precision    recall  f1-score   support
+
+         0.0       0.84      0.93      0.88       691
+         1.0       0.82      0.64      0.72       345
+
+    accuracy                           0.83      1036
+   macro avg       0.83      0.79      0.80      1036
+weighted avg       0.83      0.83      0.83      1036
+
+2025-04-28 06:41:03,928 - INFO - Confusion Matrix:
+[[644  47]
+ [124 221]]
+2025-04-28 06:41:03,929 - INFO - ROC-AUC Score: 0.8903
+2025-04-28 06:41:04,004 - INFO - ✅ Saved ROC plot to /Users/jiahuiliu/5400_final_project-4/src/img/cats_rf_roc.png
+2025-04-28 06:42:42,472 - INFO - 🔁 Running Engagement Classification...
+2025-04-28 06:42:42,473 - INFO - 🚀 Starting run_engagement_classification...
+2025-04-28 06:42:43,186 - INFO - ✅ Successfully loaded cat and dog posts.
+2025-04-28 06:42:43,186 - INFO - 🔄 Preprocessing posts for cat...
+2025-04-28 06:42:44,102 - INFO - 🔄 Preprocessing posts for dog...
+2025-04-28 06:42:44,889 - INFO - 🏷️ Labeling high/low engagement...
+2025-04-28 06:42:44,912 - INFO - 🏷️ Labeling high/low engagement...
+2025-04-28 06:42:44,920 - INFO - 🚦 Start running classifier: Cats (Logistic) (logistic)
+2025-04-28 06:42:45,954 - INFO - 📊 Classification Report for Cats (Logistic):
+              precision    recall  f1-score   support
+
+         0.0       0.83      0.91      0.87       691
+         1.0       0.78      0.64      0.70       345
+
+    accuracy                           0.82      1036
+   macro avg       0.81      0.77      0.79      1036
+weighted avg       0.82      0.82      0.81      1036
+
+2025-04-28 06:42:45,956 - INFO - Confusion Matrix:
+[[628  63]
+ [125 220]]
+2025-04-28 06:42:45,957 - INFO - ROC-AUC Score: 0.8782
+2025-04-28 06:42:47,131 - INFO - ✅ Saved ROC curve to /Users/jiahuiliu/5400_final_project-4/src/img/cats_logistic_roc.png
+2025-04-28 06:42:47,134 - INFO - ✅ Saved model to /Users/jiahuiliu/5400_final_project-4/src/gpt_classifier_suggester/model/cats_logistic_pipeline.pkl
+2025-04-28 06:42:47,165 - INFO - 🚦 Start running classifier: Dogs (Logistic) (logistic)
+2025-04-28 06:42:48,410 - INFO - 📊 Classification Report for Dogs (Logistic):
+              precision    recall  f1-score   support
+
+         0.0       0.84      0.86      0.85       653
+         1.0       0.71      0.66      0.69       325
+
+    accuracy                           0.80       978
+   macro avg       0.77      0.76      0.77       978
+weighted avg       0.79      0.80      0.80       978
+
+2025-04-28 06:42:48,412 - INFO - Confusion Matrix:
+[[564  89]
+ [109 216]]
+2025-04-28 06:42:48,413 - INFO - ROC-AUC Score: 0.8543
+2025-04-28 06:42:48,563 - INFO - ✅ Saved ROC curve to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_logistic_roc.png
+2025-04-28 06:42:48,564 - INFO - ✅ Saved model to /Users/jiahuiliu/5400_final_project-4/src/gpt_classifier_suggester/model/dogs_logistic_pipeline.pkl
+2025-04-28 06:42:48,576 - INFO - 🚦 Start running classifier: Cats (RF) (rf)
+2025-04-28 06:42:50,995 - INFO - 📊 Classification Report for Cats (RF):
+              precision    recall  f1-score   support
+
+         0.0       0.84      0.93      0.88       691
+         1.0       0.82      0.64      0.72       345
+
+    accuracy                           0.83      1036
+   macro avg       0.83      0.79      0.80      1036
+weighted avg       0.83      0.83      0.83      1036
+
+2025-04-28 06:42:50,996 - INFO - Confusion Matrix:
+[[644  47]
+ [124 221]]
+2025-04-28 06:42:50,997 - INFO - ROC-AUC Score: 0.8903
+2025-04-28 06:42:51,125 - INFO - ✅ Saved ROC curve to /Users/jiahuiliu/5400_final_project-4/src/img/cats_rf_roc.png
+2025-04-28 06:42:51,137 - INFO - 📌 Top 20 Feature Importances:
+              feature  importance
+110      title_length    0.121018
+105        num_emojis    0.049723
+109         num_words    0.046816
+102         num_verbs    0.041078
+16                cat    0.037610
+104      has_question    0.033674
+100   sentiment_score    0.028707
+101    num_adjectives    0.022212
+38               help    0.017839
+17               cats    0.016583
+2             adopted    0.016461
+103  num_exclamations    0.016283
+112         num_lines    0.016075
+111    contains_money    0.014693
+73            rescued    0.013072
+84              today    0.012625
+4            adoption    0.012094
+5              advice    0.011858
+42             kitten    0.010765
+39               home    0.010524
+2025-04-28 06:42:51,359 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/cats_rf_feature_importance.png
+2025-04-28 06:42:51,374 - INFO - ✅ Saved model to /Users/jiahuiliu/5400_final_project-4/src/gpt_classifier_suggester/model/cats_rf_pipeline.pkl
+2025-04-28 06:42:51,378 - INFO - 🚦 Start running classifier: Dogs (RF) (rf)
+2025-04-28 06:42:53,302 - INFO - 📊 Classification Report for Dogs (RF):
+              precision    recall  f1-score   support
+
+         0.0       0.85      0.93      0.89       653
+         1.0       0.83      0.66      0.74       325
+
+    accuracy                           0.84       978
+   macro avg       0.84      0.80      0.81       978
+weighted avg       0.84      0.84      0.84       978
+
+2025-04-28 06:42:53,303 - INFO - Confusion Matrix:
+[[608  45]
+ [110 215]]
+2025-04-28 06:42:53,304 - INFO - ROC-AUC Score: 0.9079
+2025-04-28 06:42:53,432 - INFO - ✅ Saved ROC curve to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_rf_roc.png
+2025-04-28 06:42:53,443 - INFO - 📌 Top 20 Feature Importances:
+              feature  importance
+110      title_length    0.082598
+109         num_words    0.074424
+102         num_verbs    0.074086
+101    num_adjectives    0.042971
+104      has_question    0.035464
+25                dog    0.035404
+100   sentiment_score    0.029773
+112         num_lines    0.023308
+103  num_exclamations    0.018817
+108      has_pronouns    0.016350
+73             rescue    0.016320
+86              sweet    0.013624
+105        num_emojis    0.012569
+74            rescued    0.012512
+26               dogs    0.012053
+42               just    0.011727
+3             adopted    0.011629
+82            shelter    0.011488
+59               need    0.011340
+31             foster    0.011163
+2025-04-28 06:42:53,593 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_rf_feature_importance.png
+2025-04-28 06:42:53,601 - INFO - ✅ Saved model to /Users/jiahuiliu/5400_final_project-4/src/gpt_classifier_suggester/model/dogs_rf_pipeline.pkl
+2025-04-28 06:43:17,848 - INFO - 🔁 Running Regression Analysis...
+2025-04-28 06:43:17,849 - INFO - 🔁 Running Regression Analysis...
+2025-04-28 06:43:19,445 - INFO - ✅ Successfully loaded posts and comments data.
+2025-04-28 06:43:21,041 - INFO - 📈 Linear Regression Performance for Cats Posts: RMSE=4527.75, R²=0.006
+2025-04-28 06:43:21,044 - INFO - ✅ Saved feature coefficients to /Users/jiahuiliu/5400_final_project-4/src/img/cats_posts_feature_coefficients.csv
+2025-04-28 06:43:22,168 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/cats_posts_feature_importance.png
+2025-04-28 06:43:22,246 - INFO - 📈 Linear Regression Performance for Dogs Posts: RMSE=991.09, R²=0.005
+2025-04-28 06:43:22,248 - INFO - ✅ Saved feature coefficients to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_posts_feature_coefficients.csv
+2025-04-28 06:43:22,488 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_posts_feature_importance.png
+2025-04-28 06:43:27,912 - INFO - 📈 Linear Regression Performance for Cats Comments: RMSE=452.40, R²=0.001
+2025-04-28 06:43:27,914 - INFO - ✅ Saved feature coefficients to /Users/jiahuiliu/5400_final_project-4/src/img/cats_comments_feature_coefficients.csv
+2025-04-28 06:43:28,113 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/cats_comments_feature_importance.png
+2025-04-28 06:43:28,200 - INFO - 📈 Linear Regression Performance for Dogs Comments: RMSE=79.92, R²=0.010
+2025-04-28 06:43:28,201 - INFO - ✅ Saved feature coefficients to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_comments_feature_coefficients.csv
+2025-04-28 06:43:28,443 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_comments_feature_importance.png
+2025-04-28 06:43:58,168 - INFO - 🔁 Running Cat vs Dog Diverging Style Analysis...
+2025-04-28 06:43:58,169 - INFO - 🚀 Starting Cat vs Dog Diverging Style Analysis...
+2025-04-28 06:43:58,169 - INFO - 🔵 Loading and preparing cat and dog datasets...
+2025-04-28 06:43:59,715 - INFO - ✅ Dataset prepared with 13408 total samples.
+2025-04-28 06:43:59,717 - INFO - 🧠 Training started using column: style_text
+2025-04-28 06:44:36,505 - INFO - ✅ Saved top word scores to /Users/jiahuiliu/5400_final_project-4/src/img/top20_word_scores_style_text.csv
+2025-04-28 06:44:36,506 - INFO - 🖼️ Plotting Diverging Word Usage: Diverging Adjective Usage (Dog - Cat)
+2025-04-28 06:44:38,017 - INFO - ✅ Saved diverging plot to /Users/jiahuiliu/5400_final_project-4/src/img/style_text_diverging_plot.png
+2025-04-28 06:44:38,026 - INFO - 🧠 Training started using column: verb_text
+2025-04-28 06:45:16,276 - INFO - ✅ Saved top word scores to /Users/jiahuiliu/5400_final_project-4/src/img/top20_word_scores_verb_text.csv
+2025-04-28 06:45:16,276 - INFO - 🖼️ Plotting Diverging Word Usage: Diverging Verb Usage (Dog - Cat)
+2025-04-28 06:45:17,384 - INFO - ✅ Saved diverging plot to /Users/jiahuiliu/5400_final_project-4/src/img/verb_text_diverging_plot.png

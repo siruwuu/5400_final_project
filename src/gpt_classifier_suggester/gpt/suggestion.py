@@ -1,10 +1,18 @@
-# src/gpt_classifier_suggester/gpt/suggestion.py
-
 import os
 from openai import OpenAI
+from dotenv import load_dotenv
+
+# 加载.env环境变量
+load_dotenv()
+
+# 从环境变量中读取 OpenAI API Key
+api_key = os.getenv("OPENAI_API_KEY")
+
+if not api_key:
+    raise ValueError("❌ OPENAI_API_KEY not found in environment variables. Please set it in your .env file.")
 
 # 初始化 OpenAI 客户端
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key=api_key)
 
 def generate_gpt_suggestions(text, pet_type, prob, model_name="gpt-4"):
     prompt = f"""
@@ -35,7 +43,6 @@ Only return the suggestions.
             max_tokens=300
         )
 
-        # ✅ 正确访问内容
         return response.choices[0].message.content
 
     except Exception as e:
