@@ -1,0 +1,11 @@
+word,dog_score,cat_score,diff
+loyal,0.2,0.0,0.2
+friendly,0.2,0.0,0.2
+energetic,0.2,0.0,0.2
+brave,0.2,0.0,0.2
+strong,0.2,0.0,0.2
+quiet,0.0,0.2,-0.2
+playful,0.0,0.2,-0.2
+cute,0.0,0.2,-0.2
+lazy,0.0,0.2,-0.2
+fluffy,0.0,0.2,-0.2
