@@ -52,7 +52,6 @@ import pandas as pd
 from dotenv import load_dotenv
 from datetime import datetime
 import time
-import re
 import random
 
 # ===== Step 1: Load environment variables =====
@@ -62,8 +61,9 @@ load_dotenv()
 reddit = praw.Reddit(
     client_id=os.getenv("REDDIT_CLIENT_ID"),
     client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-    user_agent=os.getenv("REDDIT_USER_AGENT")
+    user_agent=os.getenv("REDDIT_USER_AGENT"),
 )
+
 
 # ===== Step 2: Load existing data if available =====
 def load_existing_data():
@@ -72,22 +72,23 @@ def load_existing_data():
         dog_posts_df = pd.read_csv("data/dog_posts.csv")
         cat_comments_df = pd.read_csv("data/cat_comments.csv")
         dog_comments_df = pd.read_csv("data/dog_comments.csv")
-        
-        cat_posts = cat_posts_df.to_dict('records')
-        dog_posts = dog_posts_df.to_dict('records')
-        cat_comments = cat_comments_df.to_dict('records')
-        dog_comments = dog_comments_df.to_dict('records')
-        
-        print(f"Existing data loaded:")
+
+        cat_posts = cat_posts_df.to_dict("records")
+        dog_posts = dog_posts_df.to_dict("records")
+        cat_comments = cat_comments_df.to_dict("records")
+        dog_comments = dog_comments_df.to_dict("records")
+
+        print("Existing data loaded:")
         print(f"- Cat posts: {len(cat_posts)}")
         print(f"- Dog posts: {len(dog_posts)}")
         print(f"- Cat comments: {len(cat_comments)}")
         print(f"- Dog comments: {len(dog_comments)}")
-        
+
         return cat_posts, dog_posts, cat_comments, dog_comments
     except:
         print("No existing data found. Starting fresh.")
         return [], [], [], []
+
 
 cat_posts, dog_posts, cat_comments, dog_comments = load_existing_data()
 
@@ -99,9 +100,21 @@ dog_posts_count = len(dog_posts)
 cat_subreddits = ["cats", "CatAdvice", "kittens", "catpictures", "catcare"]
 dog_subreddits = ["dogs", "dogpictures", "dogswithjobs", "dogcare", "dogs_getting_dogs"]
 location_subreddits = [
-    "Indianapolis", "washingtondc", "chicago", "nyc", "LosAngeles", 
-    "sanfrancisco", "seattle", "portland", "austin", "boston",
-    "atlanta", "dallas", "houston", "phoenix", "philadelphia"
+    "Indianapolis",
+    "washingtondc",
+    "chicago",
+    "nyc",
+    "LosAngeles",
+    "sanfrancisco",
+    "seattle",
+    "portland",
+    "austin",
+    "boston",
+    "atlanta",
+    "dallas",
+    "houston",
+    "phoenix",
+    "philadelphia",
 ]
 
 # Target counts
@@ -118,40 +131,107 @@ next_dog_save = 1500 + save_interval if dog_posts_count >= 1500 else 1500
 # ===== Step 4: Keywords =====
 # Cat-specific adoption phrases
 cat_adoption_phrases = [
-    "adopt cat", "cat adoption", "adopt a cat", "adopting cat", "adopt kitten",
-    "kitten adoption", "rescue cat", "cat rescue", "rehome cat", "cat needs home",
-    "foster cat", "cat fostering", "shelter cat", "cat shelter", "forever home cat",
-    "cat looking for home", "cat available for adoption"
+    "adopt cat",
+    "cat adoption",
+    "adopt a cat",
+    "adopting cat",
+    "adopt kitten",
+    "kitten adoption",
+    "rescue cat",
+    "cat rescue",
+    "rehome cat",
+    "cat needs home",
+    "foster cat",
+    "cat fostering",
+    "shelter cat",
+    "cat shelter",
+    "forever home cat",
+    "cat looking for home",
+    "cat available for adoption",
 ]
 
 # Dog-specific adoption phrases
 dog_adoption_phrases = [
-    "adopt dog", "dog adoption", "adopt a dog", "adopting dog", "adopt puppy",
-    "puppy adoption", "rescue dog", "dog rescue", "rehome dog", "dog needs home",
-    "foster dog", "dog fostering", "shelter dog", "dog shelter", "forever home dog",
-    "dog looking for home", "dog available for adoption", "Great Dog Needs A Home"
+    "adopt dog",
+    "dog adoption",
+    "adopt a dog",
+    "adopting dog",
+    "adopt puppy",
+    "puppy adoption",
+    "rescue dog",
+    "dog rescue",
+    "rehome dog",
+    "dog needs home",
+    "foster dog",
+    "dog fostering",
+    "shelter dog",
+    "dog shelter",
+    "forever home dog",
+    "dog looking for home",
+    "dog available for adoption",
+    "Great Dog Needs A Home",
 ]
 
 # General adoption phrases
 general_adoption_phrases = [
-    "adopt", "adoption", "adopted", "adopting", "rehome", "re-home", 
-    "rescue", "rescued", "foster", "forever home", "shelter",
-    "looking for home", "needs home", "new home", "For adoption",
-    "Need homes", "In need of rehoming", "available", "seeking"
+    "adopt",
+    "adoption",
+    "adopted",
+    "adopting",
+    "rehome",
+    "re-home",
+    "rescue",
+    "rescued",
+    "foster",
+    "forever home",
+    "shelter",
+    "looking for home",
+    "needs home",
+    "new home",
+    "For adoption",
+    "Need homes",
+    "In need of rehoming",
+    "available",
+    "seeking",
 ]
 
 # Keywords for identifying cats and dogs
 cat_keywords = [
-    "cat", "cats", "kitten", "kittens", "kitty", 
-    "feline", "tabby", "calico", "siamese", "persian",
-    "she-cat", "tomcat", "meow"
+    "cat",
+    "cats",
+    "kitten",
+    "kittens",
+    "kitty",
+    "feline",
+    "tabby",
+    "calico",
+    "siamese",
+    "persian",
+    "she-cat",
+    "tomcat",
+    "meow",
 ]
 
 dog_keywords = [
-    "dog", "dogs", "puppy", "puppies", "pup", "pooch",
-    "canine", "hound", "retriever", "shepherd", "terrier",
-    "labrador", "beagle", "collie", "poodle", "bark", "woof"
+    "dog",
+    "dogs",
+    "puppy",
+    "puppies",
+    "pup",
+    "pooch",
+    "canine",
+    "hound",
+    "retriever",
+    "shepherd",
+    "terrier",
+    "labrador",
+    "beagle",
+    "collie",
+    "poodle",
+    "bark",
+    "woof",
 ]
+
 
 # ===== Step 5: Detection Functions =====
 def is_cat_related(text):
@@ -161,6 +241,7 @@ def is_cat_related(text):
     text = text.lower()
     return any(keyword in text for keyword in cat_keywords)
 
+
 def is_dog_related(text):
     """Check if text is related to dogs"""
     if not isinstance(text, str):
@@ -168,13 +249,14 @@ def is_dog_related(text):
     text = text.lower()
     return any(keyword in text for keyword in dog_keywords)
 
+
 def is_adoption_related(text, pet_type=None):
     """Check if text is related to pet adoption"""
     if not isinstance(text, str):
         return False
-    
+
     text = text.lower()
-    
+
     # Check against pet-specific adoption phrases first
     if pet_type == "cat":
         if any(phrase in text for phrase in cat_adoption_phrases):
@@ -182,9 +264,10 @@ def is_adoption_related(text, pet_type=None):
     elif pet_type == "dog":
         if any(phrase in text for phrase in dog_adoption_phrases):
             return True
-            
+
     # Then check general adoption phrases
     return any(phrase in text for phrase in general_adoption_phrases)
+
 
 # ===== Step 6: Main Data Collection Function =====
 def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
@@ -200,7 +283,7 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
 
     global cat_posts, dog_posts, cat_posts_count, dog_posts_count, next_cat_save, next_dog_save
     collected_post_ids = set(p.get("post_id") for p in cat_posts + dog_posts)
-    
+
     # Determine which phrases to search based on pet_type
     search_phrases = []
     if pet_type == "cat":
@@ -208,15 +291,21 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
     elif pet_type == "dog":
         search_phrases = dog_adoption_phrases + general_adoption_phrases
     else:  # both
-        search_phrases = cat_adoption_phrases + dog_adoption_phrases + general_adoption_phrases
+        search_phrases = (
+            cat_adoption_phrases + dog_adoption_phrases + general_adoption_phrases
+        )
 
     # 1. Search using appropriate adoption phrases
     for phrase in search_phrases:
-        if (pet_type in ["cat", "both"]) and cat_posts_count + len(new_cat_posts) >= target_cat_posts:
+        if (pet_type in ["cat", "both"]) and cat_posts_count + len(
+            new_cat_posts
+        ) >= target_cat_posts:
             break
-        if (pet_type in ["dog", "both"]) and dog_posts_count + len(new_dog_posts) >= target_dog_posts:
+        if (pet_type in ["dog", "both"]) and dog_posts_count + len(
+            new_dog_posts
+        ) >= target_dog_posts:
             break
-            
+
         try:
             print(f"  Searching '{phrase}' in r/{subreddit_name}...")
 
@@ -228,14 +317,14 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                 full_text = f"{post.title} {post.selftext}".strip()
                 is_related_to_cats = is_cat_related(full_text)
                 is_related_to_dogs = is_dog_related(full_text)
-                
+
                 # Skip if not related to cats or dogs
                 if not (is_related_to_cats or is_related_to_dogs):
                     continue
-                
+
                 # Determine post type based on content and search constraints
                 post_pet_type = None
-                
+
                 # For cat-specific subreddits or searches
                 if pet_type == "cat":
                     if is_related_to_cats:
@@ -252,9 +341,15 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                         post_pet_type = "dog"
                     elif is_related_to_cats and is_related_to_dogs:
                         # If truly ambiguous, classify based on the search phrase
-                        if any(cat_phrase in phrase.lower() for cat_phrase in cat_adoption_phrases):
+                        if any(
+                            cat_phrase in phrase.lower()
+                            for cat_phrase in cat_adoption_phrases
+                        ):
                             post_pet_type = "cat"
-                        elif any(dog_phrase in phrase.lower() for dog_phrase in dog_adoption_phrases):
+                        elif any(
+                            dog_phrase in phrase.lower()
+                            for dog_phrase in dog_adoption_phrases
+                        ):
                             post_pet_type = "dog"
                         else:
                             # Last resort: random assignment
@@ -271,9 +366,13 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                         "score": post.score,
                         "upvote_ratio": post.upvote_ratio,
                         "num_comments": post.num_comments,
-                        "created_utc": datetime.fromtimestamp(post.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
+                        "created_utc": (
+                            datetime.fromtimestamp(post.created_utc).strftime(
+                                "%Y-%m-%d %H:%M:%S"
+                            )
+                        ),
                         "url": f"https://reddit.com{post.permalink}",
-                        "pet_type": post_pet_type
+                        "pet_type": post_pet_type,
                     }
 
                     if post_pet_type == "cat":
@@ -288,7 +387,9 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                     try:
                         post.comments.replace_more(limit=0)
                         comment_count = 0
-                        for comment in sorted(post.comments.list(), key=lambda x: x.score, reverse=True):
+                        for comment in sorted(
+                            post.comments.list(), key=lambda x: x.score, reverse=True
+                        ):
                             if comment_count >= max_comments_per_post:
                                 break
                             if comment.body in ["[removed]", "[deleted]"]:
@@ -300,8 +401,12 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                                 "subreddit": subreddit_name,
                                 "body": comment.body,
                                 "score": comment.score,
-                                "created_utc": datetime.fromtimestamp(comment.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
-                                "pet_type": post_pet_type
+                                "created_utc": (
+                                    datetime.fromtimestamp(
+                                        comment.created_utc
+                                    ).strftime("%Y-%m-%d %H:%M:%S")
+                                ),
+                                "pet_type": post_pet_type,
                             }
 
                             if post_pet_type == "cat":
@@ -319,34 +424,63 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                         if cat_posts_count + len(new_cat_posts) >= next_cat_save:
                             temp_cat_posts = cat_posts + new_cat_posts
                             temp_cat_comments = cat_comments + new_cat_comments
-                            pd.DataFrame(temp_cat_posts).to_csv(f"data/temp/cat_posts_{cat_posts_count + len(new_cat_posts)}.csv", index=False)
-                            pd.DataFrame(temp_cat_comments).to_csv(f"data/temp/cat_comments_{cat_posts_count + len(new_cat_posts)}.csv", index=False)
-                            print(f"  ** Saved incremental cat data at {cat_posts_count + len(new_cat_posts)} posts **")
+                            pd.DataFrame(temp_cat_posts).to_csv(
+                                f"data/temp/cat_posts_{cat_posts_count + len(new_cat_posts)}.csv",
+                                index=False,
+                            )
+                            pd.DataFrame(temp_cat_comments).to_csv(
+                                f"data/temp/cat_comments_{cat_posts_count + len(new_cat_posts)}.csv",
+                                index=False,
+                            )
+                            print(
+                                f"  ** Saved incremental cat data at {cat_posts_count + len(new_cat_posts)} posts **"
+                            )
                             next_cat_save += save_interval
-                    
+
                     elif post_pet_type == "dog":
                         if dog_posts_count + len(new_dog_posts) >= next_dog_save:
                             temp_dog_posts = dog_posts + new_dog_posts
                             temp_dog_comments = dog_comments + new_dog_comments
-                            pd.DataFrame(temp_dog_posts).to_csv(f"data/temp/dog_posts_{dog_posts_count + len(new_dog_posts)}.csv", index=False)
-                            pd.DataFrame(temp_dog_comments).to_csv(f"data/temp/dog_comments_{dog_posts_count + len(new_dog_posts)}.csv", index=False)
-                            print(f"  ** Saved incremental dog data at {dog_posts_count + len(new_dog_posts)} posts **")
+                            pd.DataFrame(temp_dog_posts).to_csv(
+                                f"data/temp/dog_posts_{dog_posts_count + len(new_dog_posts)}.csv",
+                                index=False,
+                            )
+                            pd.DataFrame(temp_dog_comments).to_csv(
+                                f"data/temp/dog_comments_{dog_posts_count + len(new_dog_posts)}.csv",
+                                index=False,
+                            )
+                            print(
+                                f"  ** Saved incremental dog data at {dog_posts_count + len(new_dog_posts)} posts **"
+                            )
                             next_dog_save += save_interval
 
                     if posts_collected % print_interval == 0:
                         total_cats = cat_posts_count + len(new_cat_posts)
                         total_dogs = dog_posts_count + len(new_dog_posts)
-                        print(f"  ... {posts_collected} posts collected (checked {posts_checked})")
-                        print(f"      Current totals - Cats: {total_cats}, Dogs: {total_dogs}")
+                        print(
+                            f"  ... {posts_collected} posts collected (checked {posts_checked})"
+                        )
+                        print(
+                            f"      Current totals - Cats: {total_cats}, Dogs: {total_dogs}"
+                        )
 
                 # Check if targets have been reached
-                if cat_posts_count + len(new_cat_posts) >= target_cat_posts and dog_posts_count + len(new_dog_posts) >= target_dog_posts:
+                if (
+                    cat_posts_count + len(new_cat_posts) >= target_cat_posts
+                    and dog_posts_count + len(new_dog_posts) >= target_dog_posts
+                ):
                     print("Reached all target post counts.")
                     break
-                if pet_type == "cat" and cat_posts_count + len(new_cat_posts) >= target_cat_posts:
+                if (
+                    pet_type == "cat"
+                    and cat_posts_count + len(new_cat_posts) >= target_cat_posts
+                ):
                     print(f"Reached target cat post count ({target_cat_posts})")
                     break
-                if pet_type == "dog" and dog_posts_count + len(new_dog_posts) >= target_dog_posts:
+                if (
+                    pet_type == "dog"
+                    and dog_posts_count + len(new_dog_posts) >= target_dog_posts
+                ):
                     print(f"Reached target dog post count ({target_dog_posts})")
                     break
 
@@ -358,9 +492,13 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
 
     # 2. Browse by sort methods (new/hot/top)
     for sort_method in ["new", "hot", "top"]:
-        if (pet_type in ["cat", "both"]) and cat_posts_count + len(new_cat_posts) >= target_cat_posts:
+        if (pet_type in ["cat", "both"]) and cat_posts_count + len(
+            new_cat_posts
+        ) >= target_cat_posts:
             break
-        if (pet_type in ["dog", "both"]) and dog_posts_count + len(new_dog_posts) >= target_dog_posts:
+        if (pet_type in ["dog", "both"]) and dog_posts_count + len(
+            new_dog_posts
+        ) >= target_dog_posts:
             break
 
         try:
@@ -379,7 +517,7 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                     continue
 
                 full_text = f"{post.title} {post.selftext}".strip()
-                
+
                 # Skip if not adoption related based on pet type
                 if pet_type == "cat" and not is_adoption_related(full_text, "cat"):
                     continue
@@ -409,9 +547,15 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                         post_pet_type = "dog"
                     elif is_related_to_cats and is_related_to_dogs:
                         # For mixed content in browsing, prioritize based on subreddit type
-                        if any(cat_sub in subreddit_name.lower() for cat_sub in ["cat", "kitten"]):
+                        if any(
+                            cat_sub in subreddit_name.lower()
+                            for cat_sub in ["cat", "kitten"]
+                        ):
                             post_pet_type = "cat"
-                        elif any(dog_sub in subreddit_name.lower() for dog_sub in ["dog", "puppy"]):
+                        elif any(
+                            dog_sub in subreddit_name.lower()
+                            for dog_sub in ["dog", "puppy"]
+                        ):
                             post_pet_type = "dog"
                         else:
                             post_pet_type = random.choice(["cat", "dog"])
@@ -426,9 +570,13 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                         "score": post.score,
                         "upvote_ratio": post.upvote_ratio,
                         "num_comments": post.num_comments,
-                        "created_utc": datetime.fromtimestamp(post.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
+                        "created_utc": (
+                            datetime.fromtimestamp(post.created_utc).strftime(
+                                "%Y-%m-%d %H:%M:%S"
+                            )
+                        ),
                         "url": f"https://reddit.com{post.permalink}",
-                        "pet_type": post_pet_type
+                        "pet_type": post_pet_type,
                     }
 
                     if post_pet_type == "cat":
@@ -442,7 +590,9 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                     try:
                         post.comments.replace_more(limit=0)
                         comment_count = 0
-                        for comment in sorted(post.comments.list(), key=lambda x: x.score, reverse=True):
+                        for comment in sorted(
+                            post.comments.list(), key=lambda x: x.score, reverse=True
+                        ):
                             if comment_count >= max_comments_per_post:
                                 break
                             if comment.body in ["[removed]", "[deleted]"]:
@@ -454,8 +604,12 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                                 "subreddit": subreddit_name,
                                 "body": comment.body,
                                 "score": comment.score,
-                                "created_utc": datetime.fromtimestamp(comment.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
-                                "pet_type": post_pet_type
+                                "created_utc": (
+                                    datetime.fromtimestamp(
+                                        comment.created_utc
+                                    ).strftime("%Y-%m-%d %H:%M:%S")
+                                ),
+                                "pet_type": post_pet_type,
                             }
 
                             if post_pet_type == "cat":
@@ -473,31 +627,60 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
                         if cat_posts_count + len(new_cat_posts) >= next_cat_save:
                             temp_cat_posts = cat_posts + new_cat_posts
                             temp_cat_comments = cat_comments + new_cat_comments
-                            pd.DataFrame(temp_cat_posts).to_csv(f"data/temp/cat_posts_{cat_posts_count + len(new_cat_posts)}.csv", index=False)
-                            pd.DataFrame(temp_cat_comments).to_csv(f"data/temp/cat_comments_{cat_posts_count + len(new_cat_posts)}.csv", index=False)
-                            print(f"  ** Saved incremental cat data at {cat_posts_count + len(new_cat_posts)} posts **")
+                            pd.DataFrame(temp_cat_posts).to_csv(
+                                f"data/temp/cat_posts_{cat_posts_count + len(new_cat_posts)}.csv",
+                                index=False,
+                            )
+                            pd.DataFrame(temp_cat_comments).to_csv(
+                                f"data/temp/cat_comments_{cat_posts_count + len(new_cat_posts)}.csv",
+                                index=False,
+                            )
+                            print(
+                                f"  ** Saved incremental cat data at {cat_posts_count + len(new_cat_posts)} posts **"
+                            )
                             next_cat_save += save_interval
-                    
+
                     elif post_pet_type == "dog":
                         if dog_posts_count + len(new_dog_posts) >= next_dog_save:
                             temp_dog_posts = dog_posts + new_dog_posts
                             temp_dog_comments = dog_comments + new_dog_comments
-                            pd.DataFrame(temp_dog_posts).to_csv(f"data/temp/dog_posts_{dog_posts_count + len(new_dog_posts)}.csv", index=False)
-                            pd.DataFrame(temp_dog_comments).to_csv(f"data/temp/dog_comments_{dog_posts_count + len(new_dog_posts)}.csv", index=False)
-                            print(f"  ** Saved incremental dog data at {dog_posts_count + len(new_dog_posts)} posts **")
+                            pd.DataFrame(temp_dog_posts).to_csv(
+                                f"data/temp/dog_posts_{dog_posts_count + len(new_dog_posts)}.csv",
+                                index=False,
+                            )
+                            pd.DataFrame(temp_dog_comments).to_csv(
+                                f"data/temp/dog_comments_{dog_posts_count + len(new_dog_posts)}.csv",
+                                index=False,
+                            )
+                            print(
+                                f"  ** Saved incremental dog data at {dog_posts_count + len(new_dog_posts)} posts **"
+                            )
                             next_dog_save += save_interval
 
                     if posts_collected % print_interval == 0:
                         total_cats = cat_posts_count + len(new_cat_posts)
                         total_dogs = dog_posts_count + len(new_dog_posts)
-                        print(f"  ... {posts_collected} posts collected (checked {posts_checked})")
-                        print(f"      Current totals - Cats: {total_cats}, Dogs: {total_dogs}")
+                        print(
+                            f"  ... {posts_collected} posts collected (checked {posts_checked})"
+                        )
+                        print(
+                            f"      Current totals - Cats: {total_cats}, Dogs: {total_dogs}"
+                        )
 
-                if cat_posts_count + len(new_cat_posts) >= target_cat_posts and dog_posts_count + len(new_dog_posts) >= target_dog_posts:
+                if (
+                    cat_posts_count + len(new_cat_posts) >= target_cat_posts
+                    and dog_posts_count + len(new_dog_posts) >= target_dog_posts
+                ):
                     break
-                if pet_type == "cat" and cat_posts_count + len(new_cat_posts) >= target_cat_posts:
+                if (
+                    pet_type == "cat"
+                    and cat_posts_count + len(new_cat_posts) >= target_cat_posts
+                ):
                     break
-                if pet_type == "dog" and dog_posts_count + len(new_dog_posts) >= target_dog_posts:
+                if (
+                    pet_type == "dog"
+                    and dog_posts_count + len(new_dog_posts) >= target_dog_posts
+                ):
                     break
 
                 time.sleep(1)
@@ -514,6 +697,7 @@ def collect_pet_posts(subreddit_name, pet_type="both", max_posts=100):
 
     return new_cat_posts, new_dog_posts, new_cat_comments, new_dog_comments
 
+
 # ===== Step 7: Main Script =====
 os.makedirs("data/temp", exist_ok=True)
 
@@ -523,7 +707,9 @@ try:
         if cat_posts_count >= target_cat_posts:
             print(f"Target cat post count reached ({target_cat_posts})")
             break
-        new_cats, new_dogs, new_cat_cmts, new_dog_cmts = collect_pet_posts(sub, pet_type="cat", max_posts=200)
+        new_cats, new_dogs, new_cat_cmts, new_dog_cmts = collect_pet_posts(
+            sub, pet_type="cat", max_posts=200
+        )
         cat_posts.extend(new_cats)
         dog_posts.extend(new_dogs)
         cat_comments.extend(new_cat_cmts)
@@ -532,18 +718,30 @@ try:
         dog_posts_count = len(dog_posts)
 
         if new_cats or new_dogs:
-            pd.DataFrame(cat_posts).to_csv(f"data/temp/cat_posts_after_{sub}.csv", index=False)
-            pd.DataFrame(dog_posts).to_csv(f"data/temp/dog_posts_after_{sub}.csv", index=False)
-            pd.DataFrame(cat_comments).to_csv(f"data/temp/cat_comments_after_{sub}.csv", index=False)
-            pd.DataFrame(dog_comments).to_csv(f"data/temp/dog_comments_after_{sub}.csv", index=False)
-            print(f"Temporary save complete: Cats: {cat_posts_count}, Dogs: {dog_posts_count}")
+            pd.DataFrame(cat_posts).to_csv(
+                f"data/temp/cat_posts_after_{sub}.csv", index=False
+            )
+            pd.DataFrame(dog_posts).to_csv(
+                f"data/temp/dog_posts_after_{sub}.csv", index=False
+            )
+            pd.DataFrame(cat_comments).to_csv(
+                f"data/temp/cat_comments_after_{sub}.csv", index=False
+            )
+            pd.DataFrame(dog_comments).to_csv(
+                f"data/temp/dog_comments_after_{sub}.csv", index=False
+            )
+            print(
+                f"Temporary save complete: Cats: {cat_posts_count}, Dogs: {dog_posts_count}"
+            )
 
     print("\n=== Collecting from dog-related subreddits ===")
     for sub in dog_subreddits:
         if dog_posts_count >= target_dog_posts:
             print(f"Target dog post count reached ({target_dog_posts})")
             break
-        new_cats, new_dogs, new_cat_cmts, new_dog_cmts = collect_pet_posts(sub, pet_type="dog", max_posts=200)
+        new_cats, new_dogs, new_cat_cmts, new_dog_cmts = collect_pet_posts(
+            sub, pet_type="dog", max_posts=200
+        )
         cat_posts.extend(new_cats)
         dog_posts.extend(new_dogs)
         cat_comments.extend(new_cat_cmts)
@@ -552,18 +750,30 @@ try:
         dog_posts_count = len(dog_posts)
 
         if new_cats or new_dogs:
-            pd.DataFrame(cat_posts).to_csv(f"data/temp/cat_posts_after_{sub}.csv", index=False)
-            pd.DataFrame(dog_posts).to_csv(f"data/temp/dog_posts_after_{sub}.csv", index=False)
-            pd.DataFrame(cat_comments).to_csv(f"data/temp/cat_comments_after_{sub}.csv", index=False)
-            pd.DataFrame(dog_comments).to_csv(f"data/temp/dog_comments_after_{sub}.csv", index=False)
-            print(f"Temporary save complete: Cats: {cat_posts_count}, Dogs: {dog_posts_count}")
+            pd.DataFrame(cat_posts).to_csv(
+                f"data/temp/cat_posts_after_{sub}.csv", index=False
+            )
+            pd.DataFrame(dog_posts).to_csv(
+                f"data/temp/dog_posts_after_{sub}.csv", index=False
+            )
+            pd.DataFrame(cat_comments).to_csv(
+                f"data/temp/cat_comments_after_{sub}.csv", index=False
+            )
+            pd.DataFrame(dog_comments).to_csv(
+                f"data/temp/dog_comments_after_{sub}.csv", index=False
+            )
+            print(
+                f"Temporary save complete: Cats: {cat_posts_count}, Dogs: {dog_posts_count}"
+            )
 
     print("\n=== Collecting from location-based subreddits ===")
     for sub in location_subreddits:
         if cat_posts_count >= target_cat_posts and dog_posts_count >= target_dog_posts:
             print("All post targets reached. Stopping.")
             break
-        new_cats, new_dogs, new_cat_cmts, new_dog_cmts = collect_pet_posts(sub, pet_type="both", max_posts=100)
+        new_cats, new_dogs, new_cat_cmts, new_dog_cmts = collect_pet_posts(
+            sub, pet_type="both", max_posts=100
+        )
         cat_posts.extend(new_cats)
         dog_posts.extend(new_dogs)
         cat_comments.extend(new_cat_cmts)
@@ -572,11 +782,21 @@ try:
         dog_posts_count = len(dog_posts)
 
         if new_cats or new_dogs:
-            pd.DataFrame(cat_posts).to_csv(f"data/temp/cat_posts_after_{sub}.csv", index=False)
-            pd.DataFrame(dog_posts).to_csv(f"data/temp/dog_posts_after_{sub}.csv", index=False)
-            pd.DataFrame(cat_comments).to_csv(f"data/temp/cat_comments_after_{sub}.csv", index=False)
-            pd.DataFrame(dog_comments).to_csv(f"data/temp/dog_comments_after_{sub}.csv", index=False)
-            print(f"Temporary save complete: Cats: {cat_posts_count}, Dogs: {dog_posts_count}")
+            pd.DataFrame(cat_posts).to_csv(
+                f"data/temp/cat_posts_after_{sub}.csv", index=False
+            )
+            pd.DataFrame(dog_posts).to_csv(
+                f"data/temp/dog_posts_after_{sub}.csv", index=False
+            )
+            pd.DataFrame(cat_comments).to_csv(
+                f"data/temp/cat_comments_after_{sub}.csv", index=False
+            )
+            pd.DataFrame(dog_comments).to_csv(
+                f"data/temp/dog_comments_after_{sub}.csv", index=False
+            )
+            print(
+                f"Temporary save complete: Cats: {cat_posts_count}, Dogs: {dog_posts_count}"
+            )
 
     # ===== Step 8: Save Final Result =====
     pd.DataFrame(cat_posts).to_csv("data/cat_posts.csv", index=False)
@@ -599,12 +819,14 @@ try:
     print(f"  - Cat comments: {len(cat_comments)}")
     print(f"  - Dog comments: {len(dog_comments)}")
 
-    cat_avg = len(cat_comments)/cat_posts_count if cat_posts_count > 0 else 0
-    dog_avg = len(dog_comments)/dog_posts_count if dog_posts_count > 0 else 0
+    cat_avg = len(cat_comments) / cat_posts_count if cat_posts_count > 0 else 0
+    dog_avg = len(dog_comments) / dog_posts_count if dog_posts_count > 0 else 0
     print("\nAverage comments per post:")
     print(f"- Cat posts: {cat_avg:.2f}")
     print(f"- Dog posts: {dog_avg:.2f}")
-    print(f"- Overall: {len(all_comments)/len(all_posts) if len(all_posts) > 0 else 0:.2f}")
+    print(
+        f"- Overall: {len(all_comments)/len(all_posts) if len(all_posts) > 0 else 0:.2f}"
+    )
 
 except KeyboardInterrupt:
     print("\nProcess interrupted by user.")

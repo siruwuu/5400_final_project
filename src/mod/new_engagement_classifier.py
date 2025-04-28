@@ -5,9 +5,7 @@ import pickle
 import pathlib
 import logging
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
-from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LogisticRegression
@@ -18,10 +16,16 @@ from sklearn.metrics import (
     classification_report,
     confusion_matrix,
     roc_auc_score,
-    roc_curve
+    roc_curve,
 )
 
-def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir="src/gpt_classifier_suggester/model", save_model=True):
+
+def run_engagement_classification(
+    data_dir="data",
+    save_dir="src/img",
+    model_dir="src/gpt_classifier_suggester/model",
+    save_model=True,
+):
     logging.info("🚀 Starting run_engagement_classification...")
 
     current_path = pathlib.Path(__file__).resolve()
@@ -44,9 +48,15 @@ def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir
     def preprocess_posts(df, pet_type=None):
         logging.info(f"🔄 Preprocessing posts for {pet_type}...")
         df["engagement_score"] = df["score"] + 0.5 * df["num_comments"]
-        df["num_adjectives"] = df["adjectives"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
-        df["num_verbs"] = df["verbs"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
-        df["num_emojis"] = df["cleaned_text"].apply(lambda x: sum(1 for c in str(x) if c in emoji.EMOJI_DATA))
+        df["num_adjectives"] = df["adjectives"].apply(
+            lambda x: len(eval(x)) if pd.notnull(x) else 0
+        )
+        df["num_verbs"] = df["verbs"].apply(
+            lambda x: len(eval(x)) if pd.notnull(x) else 0
+        )
+        df["num_emojis"] = df["cleaned_text"].apply(
+            lambda x: sum(1 for c in str(x) if c in emoji.EMOJI_DATA)
+        )
 
         urgency_keywords = ["urgent", "emergency", "last chance", "help", "please"]
         pronouns = ["you", "your", "we", "us"]
@@ -62,7 +72,11 @@ def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir
         def contains_money(text):
             text = str(text).lower()
             return int(
-                any(kw in text for kw in ["donation", "donate", "pledge", "$", "fund", "raise"]) or bool(re.search(r"\$\d+", text))
+                any(
+                    kw in text
+                    for kw in ["donation", "donate", "pledge", "$", "fund", "raise"]
+                )
+                or bool(re.search(r"\$\d+", text))
             )
 
         df["contains_money"] = df["cleaned_text"].apply(contains_money)
@@ -88,15 +102,30 @@ def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir
     cats_posts = label_high_engagement(cats_posts)
     dogs_posts = label_high_engagement(dogs_posts)
 
-    def run_classifier(df, label="Posts", model="logistic", save_prefix="cats", save_model=True, model_dir_absolute=None):
+    def run_classifier(
+        df,
+        label="Posts",
+        model="logistic",
+        save_prefix="cats",
+        save_model=True,
+        model_dir_absolute=None,
+    ):
         logging.info(f"🚦 Start running classifier: {label} ({model})")
 
         structured_features = [
-            "sentiment_score", "num_adjectives", "num_verbs",
-            "num_exclamations", "has_question", "num_emojis",
-            "contains_adopt_keywords", "has_urgency_words",
-            "has_pronouns", "num_words", "title_length",
-            "contains_money", "num_lines"
+            "sentiment_score",
+            "num_adjectives",
+            "num_verbs",
+            "num_exclamations",
+            "has_question",
+            "num_emojis",
+            "contains_adopt_keywords",
+            "has_urgency_words",
+            "has_pronouns",
+            "num_words",
+            "title_length",
+            "contains_money",
+            "num_lines",
         ]
         text_feature = "cleaned_text"
 
@@ -109,28 +138,29 @@ def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir
         )
 
         tfidf = TfidfVectorizer(max_features=100, stop_words="english")
-        preprocessor = ColumnTransformer([
-            ("tfidf", tfidf, text_feature),
-            ("structured", "passthrough", structured_features)
-        ])
+        preprocessor = ColumnTransformer(
+            [
+                ("tfidf", tfidf, text_feature),
+                ("structured", "passthrough", structured_features),
+            ]
+        )
 
         if model == "logistic":
             clf = LogisticRegression(max_iter=1000)
         elif model == "rf":
             clf = RandomForestClassifier(n_estimators=100, random_state=42)
         else:
-            raise ValueError(f"Model not recognized")
+            raise ValueError("Model not recognized")
 
-        pipeline = Pipeline([
-            ("features", preprocessor),
-            ("clf", clf)
-        ])
+        pipeline = Pipeline([("features", preprocessor), ("clf", clf)])
 
         pipeline.fit(X_train, y_train)
         y_pred = pipeline.predict(X_test)
         y_prob = pipeline.predict_proba(X_test)[:, 1]
 
-        logging.info(f"📊 Classification Report for {label}:\n{classification_report(y_test, y_pred)}")
+        logging.info(
+            f"📊 Classification Report for {label}:\n{classification_report(y_test, y_pred)}"
+        )
         logging.info(f"Confusion Matrix:\n{confusion_matrix(y_test, y_pred)}")
         logging.info(f"ROC-AUC Score: {roc_auc_score(y_test, y_prob):.4f}")
 
@@ -150,22 +180,29 @@ def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir
         logging.info(f"✅ Saved ROC curve to {roc_plot_path}")
 
         if model == "rf":
-            tfidf_features = pipeline.named_steps["features"].transformers_[0][1].get_feature_names_out()
+            tfidf_features = (
+                pipeline.named_steps["features"]
+                .transformers_[0][1]
+                .get_feature_names_out()
+            )
             all_feature_names = list(tfidf_features) + structured_features
             importances = pipeline.named_steps["clf"].feature_importances_
 
-            importance_df = pd.DataFrame({
-                "feature": all_feature_names,
-                "importance": importances
-            }).sort_values(by="importance", ascending=False)
+            importance_df = pd.DataFrame(
+                {"feature": all_feature_names, "importance": importances}
+            ).sort_values(by="importance", ascending=False)
 
             logging.info(f"📌 Top 20 Feature Importances:\n{importance_df.head(20)}")
 
             plt.figure(figsize=(7, 5))
-            importance_df.head(15).plot(kind="barh", x="feature", y="importance", legend=False)
+            importance_df.head(15).plot(
+                kind="barh", x="feature", y="importance", legend=False
+            )
             plt.gca().invert_yaxis()
             plt.tight_layout()
-            feature_plot_path = save_dir_absolute / f"{save_prefix}_{model}_feature_importance.png"
+            feature_plot_path = (
+                save_dir_absolute / f"{save_prefix}_{model}_feature_importance.png"
+            )
             plt.savefig(feature_plot_path, dpi=300)
             plt.close()
             logging.info(f"✅ Saved feature importance plot to {feature_plot_path}")
@@ -179,7 +216,35 @@ def run_engagement_classification(data_dir="data", save_dir="src/img", model_dir
             logging.warning(f"⚠️ Model not saved (save_model={save_model})")
 
     # Run all classifiers
-    run_classifier(cats_posts, label="Cats (Logistic)", model="logistic", save_prefix="cats", save_model=save_model, model_dir_absolute=model_dir_absolute)
-    run_classifier(dogs_posts, label="Dogs (Logistic)", model="logistic", save_prefix="dogs", save_model=save_model, model_dir_absolute=model_dir_absolute)
-    run_classifier(cats_posts, label="Cats (RF)", model="rf", save_prefix="cats", save_model=save_model, model_dir_absolute=model_dir_absolute)
-    run_classifier(dogs_posts, label="Dogs (RF)", model="rf", save_prefix="dogs", save_model=save_model, model_dir_absolute=model_dir_absolute)
+    run_classifier(
+        cats_posts,
+        label="Cats (Logistic)",
+        model="logistic",
+        save_prefix="cats",
+        save_model=save_model,
+        model_dir_absolute=model_dir_absolute,
+    )
+    run_classifier(
+        dogs_posts,
+        label="Dogs (Logistic)",
+        model="logistic",
+        save_prefix="dogs",
+        save_model=save_model,
+        model_dir_absolute=model_dir_absolute,
+    )
+    run_classifier(
+        cats_posts,
+        label="Cats (RF)",
+        model="rf",
+        save_prefix="cats",
+        save_model=save_model,
+        model_dir_absolute=model_dir_absolute,
+    )
+    run_classifier(
+        dogs_posts,
+        label="Dogs (RF)",
+        model="rf",
+        save_prefix="dogs",
+        save_model=save_model,
+        model_dir_absolute=model_dir_absolute,
+    )

@@ -17,14 +17,50 @@ This project powers two interactive demos designed to help shelters improve adop
 ## Project Overview
 
 We analyze thousands of Reddit posts and comments to understand how language—particularly emotional tone, part-of-speech features, and sentiment—impacts user engagement.
-This project focuses on Reddit adoption posts (cats & dogs) and aims to optimize their engagement performance (likes, comments, shares).
-It provides three core capabilities:
 
-- Engagement Classification: Predict whether a post will have high or low engagement.
-- Engagement Regression: Estimate engagement score directly.
-- Cat vs Dog Linguistic Divergence Analysis: Explore language differences between cat and dog posts.
+This project focuses on Reddit adoption posts (cats & dogs) and aims to optimize their engagement performance (likes, comments, shares). By leveraging advanced machine learning techniques, we aim to provide actionable insights for shelters and individuals to improve their posts' chances of going viral, increasing user interaction.
 
-The ultimate goal is to identify actionable linguistic features that enhance post performance, with GPT-4 providing targeted suggestions.
+### Core Capabilities
+#### Engagement Classification
+
+- Objective: Predict whether a Reddit post will have high or low engagement based on the content's linguistic features.
+- Method: We train a classification model using features such as sentiment scores, word usage, emotional tone, and part-of-speech tagging. The model categorizes posts into two classes: high engagement (predicted likelihood of high user interaction) and low engagement.
+
+#### Engagement Regression
+
+- Objective: Estimate the precise engagement score of a Reddit post, providing a continuous value representing how engaging the content is.
+- Method: We apply regression analysis techniques to predict the engagement score based on textual features. This helps shelters or users to gauge how well their posts might perform in terms of likes, comments, and shares.
+
+#### Cat vs Dog Linguistic Divergence Analysis
+
+- Objective: Investigate linguistic differences between cat and dog posts to understand the unique features of each pet's community and optimize post style.
+- Method: We compare the use of certain linguistic elements (like adjectives and verbs) across cat and dog adoption posts. This provides insights into the tone, sentiment, and language preferences of different pet communities.
+
+### How the Classifier Guides GPT Suggestions
+The classifier plays a crucial role in guiding GPT-4 to provide specific suggestions for improving engagement in Reddit adoption posts.
+
+#### Flow:
+1. Training the Classifier:
+   
+   - The classifier is trained on historical Reddit adoption posts, with the target variable being the engagement score (high or low). It learns the linguistic patterns that correlate with higher engagement. The classifier uses features like sentiment scores, word choice (adjectives and verbs), title length, urgency, and the presence of certain keywords (e.g., adoption, rescue).
+  
+2. Engagement Prediction:
+   
+   - Once trained, the classifier is used to predict the engagement potential of new Reddit posts. For each post, the classifier outputs a probability score representing the likelihood of high engagement (above a 50% threshold).
+
+3. Guiding GPT:
+   
+   - The classifier’s output (high or low engagement prediction) is fed into GPT-4 as part of the input prompt. Based on this classification, GPT is tasked with providing actionable suggestions for improving engagement.
+   - If the classifier predicts high engagement, GPT may suggest ways to amplify the post’s impact (e.g., highlighting emotional tone, optimizing call-to-action phrases, or fine-tuning the sentiment).
+   - If the classifier predicts low engagement, GPT provides suggestions to improve the post, such as making the content more urgent, appealing, or concise, and increasing the emotional appeal.
+
+4. GPT-4 Suggestion Output:
+   - Based on the predictions from the classifier, GPT-4 generates suggestions on improving the language, tone, or structure of the post to increase user interaction. This might include: 1. Rewording parts of the post to invoke a stronger emotional response. 2. Reframing the language to make the pet's characteristics stand out more. 3. Including a more urgent call to action.
+
+5. Final Suggestions:
+   
+   - The suggestions from GPT-4 are presented to the user (or shelter) for them to use in editing their posts, thus optimizing their chances of receiving higher engagement.
+
 
 ---
 
@@ -70,7 +106,7 @@ The ultimate goal is to identify actionable linguistic features that enhance pos
 ---
 
 ## Architecture Overview
-[plot]
+![Architecture Diagram](src/img/overview.jpeg)
 - src/mod/:
 - - new_engagement_classifier.py: Train classifiers to predict high/low engagement.
 - - new_engagement_regression.py: Regression analysis for predicting engagement scores.

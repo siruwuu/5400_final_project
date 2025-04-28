@@ -18,6 +18,7 @@ os.makedirs(IMG_DIR, exist_ok=True)
 URGENCY_KEYWORDS = ["urgent", "emergency", "last chance", "help", "please"]
 PRONOUNS = ["you", "your", "we", "us"]
 
+
 def run_regression_analysis(data_dir="data", save_dir="src/img"):
     logging.info("🔁 Running Regression Analysis...")
 
@@ -43,46 +44,83 @@ def run_regression_analysis(data_dir="data", save_dir="src/img"):
     cats_comments = preprocess_comments(cats_comments)
     dogs_comments = preprocess_comments(dogs_comments)
 
-    analyze_comment_engagement(cats_comments, label="Cats Comments", save_dir=save_dir_absolute)
-    analyze_comment_engagement(dogs_comments, label="Dogs Comments", save_dir=save_dir_absolute)
+    analyze_comment_engagement(
+        cats_comments, label="Cats Comments", save_dir=save_dir_absolute
+    )
+    analyze_comment_engagement(
+        dogs_comments, label="Dogs Comments", save_dir=save_dir_absolute
+    )
+
 
 def engineer_post_features(df):
     df["engagement_score"] = df["score"] + 0.5 * df["num_comments"]
-    df["num_adjectives"] = df["adjectives"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
+    df["num_adjectives"] = df["adjectives"].apply(
+        lambda x: len(eval(x)) if pd.notnull(x) else 0
+    )
     df["num_verbs"] = df["verbs"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
-    df["num_emojis"] = df["cleaned_text"].apply(lambda x: sum(1 for c in str(x) if c in emoji.EMOJI_DATA))
-    df["has_urgency_words"] = df["cleaned_text"].apply(lambda x: int(any(word in str(x).lower() for word in URGENCY_KEYWORDS)))
-    df["has_pronouns"] = df["cleaned_text"].apply(lambda x: int(any(p in str(x).lower() for p in PRONOUNS)))
+    df["num_emojis"] = df["cleaned_text"].apply(
+        lambda x: sum(1 for c in str(x) if c in emoji.EMOJI_DATA)
+    )
+    df["has_urgency_words"] = df["cleaned_text"].apply(
+        lambda x: int(any(word in str(x).lower() for word in URGENCY_KEYWORDS))
+    )
+    df["has_pronouns"] = df["cleaned_text"].apply(
+        lambda x: int(any(p in str(x).lower() for p in PRONOUNS))
+    )
     df["title_length"] = df["title"].apply(lambda x: len(str(x)))
     df["contains_money"] = df["cleaned_text"].apply(contains_money)
     df["num_lines"] = df["selftext"].apply(lambda x: str(x).count("\n"))
 
+
 def preprocess_comments(df):
-    df["num_adjectives"] = df["adjectives"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
+    df["num_adjectives"] = df["adjectives"].apply(
+        lambda x: len(eval(x)) if pd.notnull(x) else 0
+    )
     df["num_verbs"] = df["verbs"].apply(lambda x: len(eval(x)) if pd.notnull(x) else 0)
-    df["num_emojis"] = df["cleaned_text"].apply(lambda x: sum(1 for c in str(x) if c in emoji.EMOJI_DATA))
-    df["has_urgency_words"] = df["cleaned_text"].apply(lambda x: int(any(word in str(x).lower() for word in URGENCY_KEYWORDS)))
-    df["has_pronouns"] = df["cleaned_text"].apply(lambda x: int(any(p in str(x).lower() for p in PRONOUNS)))
+    df["num_emojis"] = df["cleaned_text"].apply(
+        lambda x: sum(1 for c in str(x) if c in emoji.EMOJI_DATA)
+    )
+    df["has_urgency_words"] = df["cleaned_text"].apply(
+        lambda x: int(any(word in str(x).lower() for word in URGENCY_KEYWORDS))
+    )
+    df["has_pronouns"] = df["cleaned_text"].apply(
+        lambda x: int(any(p in str(x).lower() for p in PRONOUNS))
+    )
     return df
+
 
 def contains_money(text):
     money_keywords = ["donation", "donate", "pledge", "$", "fund", "raise"]
     text = str(text).lower()
-    return int(any(kw in text for kw in money_keywords) or bool(re.search(r"\$\d+", text)))
+    return int(
+        any(kw in text for kw in money_keywords) or bool(re.search(r"\$\d+", text))
+    )
+
 
 def analyze_engagement(df, label="Posts", save_dir=Path("src/img")):
     feature_columns = [
-        "sentiment_score", "num_adjectives", "num_verbs",
-        "num_exclamations", "has_question", "num_emojis",
-        "contains_adopt_keywords", "has_urgency_words", "has_pronouns",
-        "num_words", "title_length", "contains_money", "num_lines"
+        "sentiment_score",
+        "num_adjectives",
+        "num_verbs",
+        "num_exclamations",
+        "has_question",
+        "num_emojis",
+        "contains_adopt_keywords",
+        "has_urgency_words",
+        "has_pronouns",
+        "num_words",
+        "title_length",
+        "contains_money",
+        "num_lines",
     ]
 
     df_model = df.dropna(subset=["engagement_score"] + feature_columns).copy()
     X = df_model[feature_columns]
     y = df_model["engagement_score"]
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
     model = LinearRegression()
     model.fit(X_train, y_train)
@@ -91,14 +129,17 @@ def analyze_engagement(df, label="Posts", save_dir=Path("src/img")):
     rmse = np.sqrt(mean_squared_error(y_test, y_pred))
     r2 = r2_score(y_test, y_pred)
 
-    logging.info(f"📈 Linear Regression Performance for {label}: RMSE={rmse:.2f}, R²={r2:.3f}")
+    logging.info(
+        f"📈 Linear Regression Performance for {label}: RMSE={rmse:.2f}, R²={r2:.3f}"
+    )
 
-    coef_df = pd.DataFrame({
-        "Feature": feature_columns,
-        "Coefficient": model.coef_
-    }).sort_values(by="Coefficient", ascending=False)
+    coef_df = pd.DataFrame(
+        {"Feature": feature_columns, "Coefficient": model.coef_}
+    ).sort_values(by="Coefficient", ascending=False)
 
-    coef_csv_path = save_dir / f"{label.lower().replace(' ', '_')}_feature_coefficients.csv"
+    coef_csv_path = (
+        save_dir / f"{label.lower().replace(' ', '_')}_feature_coefficients.csv"
+    )
     coef_df.to_csv(coef_csv_path, index=False)
     logging.info(f"✅ Saved feature coefficients to {coef_csv_path}")
 
@@ -115,19 +156,28 @@ def analyze_engagement(df, label="Posts", save_dir=Path("src/img")):
     plt.close()
     logging.info(f"✅ Saved feature importance plot to {plot_path}")
 
+
 def analyze_comment_engagement(df, label="Comments", save_dir=Path("src/img")):
     feature_columns = [
-        "sentiment_score", "num_adjectives", "num_verbs",
-        "num_exclamations", "has_question", "num_emojis",
-        "contains_adopt_keywords", "has_urgency_words",
-        "has_pronouns", "num_words"
+        "sentiment_score",
+        "num_adjectives",
+        "num_verbs",
+        "num_exclamations",
+        "has_question",
+        "num_emojis",
+        "contains_adopt_keywords",
+        "has_urgency_words",
+        "has_pronouns",
+        "num_words",
     ]
 
     df_model = df.dropna(subset=["score"] + feature_columns).copy()
     X = df_model[feature_columns]
     y = df_model["score"]
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
     model = LinearRegression()
     model.fit(X_train, y_train)
@@ -136,14 +186,17 @@ def analyze_comment_engagement(df, label="Comments", save_dir=Path("src/img")):
     rmse = np.sqrt(mean_squared_error(y_test, y_pred))
     r2 = r2_score(y_test, y_pred)
 
-    logging.info(f"📈 Linear Regression Performance for {label}: RMSE={rmse:.2f}, R²={r2:.3f}")
+    logging.info(
+        f"📈 Linear Regression Performance for {label}: RMSE={rmse:.2f}, R²={r2:.3f}"
+    )
 
-    coef_df = pd.DataFrame({
-        "Feature": feature_columns,
-        "Coefficient": model.coef_
-    }).sort_values(by="Coefficient", ascending=False)
+    coef_df = pd.DataFrame(
+        {"Feature": feature_columns, "Coefficient": model.coef_}
+    ).sort_values(by="Coefficient", ascending=False)
 
-    coef_csv_path = save_dir / f"{label.lower().replace(' ', '_')}_feature_coefficients.csv"
+    coef_csv_path = (
+        save_dir / f"{label.lower().replace(' ', '_')}_feature_coefficients.csv"
+    )
     coef_df.to_csv(coef_csv_path, index=False)
     logging.info(f"✅ Saved feature coefficients to {coef_csv_path}")
 

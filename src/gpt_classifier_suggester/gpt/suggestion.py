@@ -9,10 +9,13 @@ load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 
 if not api_key:
-    raise ValueError("❌ OPENAI_API_KEY not found in environment variables. Please set it in your .env file.")
+    raise ValueError(
+        "❌ OPENAI_API_KEY not found in environment variables. Please set it in your .env file."
+    )
 
 # 初始化 OpenAI 客户端
 client = OpenAI(api_key=api_key)
+
 
 def generate_gpt_suggestions(text, pet_type, prob, model_name="gpt-4"):
     prompt = f"""
@@ -40,7 +43,7 @@ Only return the suggestions.
             model=model_name,
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
-            max_tokens=300
+            max_tokens=300,
         )
 
         return response.choices[0].message.content

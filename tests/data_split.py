@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 from pathlib import Path
 
@@ -12,7 +11,7 @@ files = [
     "cats_all_post_processed.csv",
     "dogs_all_posts_processed.csv",
     "cats_all_comments_processed.csv",
-    "dogs_all_comments_processed.csv"
+    "dogs_all_comments_processed.csv",
 ]
 
 for fname in files:

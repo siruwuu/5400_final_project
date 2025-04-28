@@ -16,6 +16,7 @@ WORDS_TO_EXCLUDE = {"kitten", "puppy"}
 IMG_DIR = pathlib.Path(__file__).resolve().parent.parent / "img"
 os.makedirs(IMG_DIR, exist_ok=True)
 
+
 def load_and_prepare_data(cat_path, dog_path):
     logging.info("🔵 Loading and preparing cat and dog datasets...")
 
@@ -29,15 +30,22 @@ def load_and_prepare_data(cat_path, dog_path):
     df = pd.concat([cat_df, dog_df], ignore_index=True)
     df["label"] = df["pet_type"].map({"cat": 0, "dog": 1})
 
-    df["adjectives"] = df["adjectives"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else [])
-    df["adjectives"] = df["adjectives"].apply(lambda words: [w for w in words if w.lower() not in WORDS_TO_EXCLUDE])
+    df["adjectives"] = df["adjectives"].apply(
+        lambda x: ast.literal_eval(x) if isinstance(x, str) else []
+    )
+    df["adjectives"] = df["adjectives"].apply(
+        lambda words: [w for w in words if w.lower() not in WORDS_TO_EXCLUDE]
+    )
     df["style_text"] = df["adjectives"].apply(lambda adj_list: " ".join(adj_list))
 
-    df["verbs"] = df["verbs"].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else [])
+    df["verbs"] = df["verbs"].apply(
+        lambda x: ast.literal_eval(x) if isinstance(x, str) else []
+    )
     df["verb_text"] = df["verbs"].apply(lambda verb_list: " ".join(verb_list))
 
     logging.info(f"✅ Dataset prepared with {len(df)} total samples.")
     return df
+
 
 def plot_diverging_words(df, tfidf, feature_names, top_indices, column_name, title):
     logging.info(f"🖼️ Plotting Diverging Word Usage: {title}")
@@ -71,6 +79,7 @@ def plot_diverging_words(df, tfidf, feature_names, top_indices, column_name, tit
     plt.close()
     logging.info(f"✅ Saved diverging plot to {img_save_path}")
 
+
 def run_style_model(df, text_col, plot_title, diverging_title):
     logging.info(f"🧠 Training started using column: {text_col}")
 
@@ -103,12 +112,14 @@ def run_style_model(df, text_col, plot_title, diverging_title):
         word = feature_names[i]
         cat_avg = df[df["label"] == 0]["tfidf_vector"].apply(lambda row: row[i]).mean()
         dog_avg = df[df["label"] == 1]["tfidf_vector"].apply(lambda row: row[i]).mean()
-        word_score_list.append({
-            "word": word,
-            "dog_score": round(dog_avg, 4),
-            "cat_score": round(cat_avg, 4),
-            "diff": round(dog_avg - cat_avg, 4)
-        })
+        word_score_list.append(
+            {
+                "word": word,
+                "dog_score": round(dog_avg, 4),
+                "cat_score": round(cat_avg, 4),
+                "diff": round(dog_avg - cat_avg, 4),
+            }
+        )
 
     word_scores_df = pd.DataFrame(word_score_list)
     word_scores_df = word_scores_df.sort_values(by="diff", ascending=False)
@@ -117,7 +128,10 @@ def run_style_model(df, text_col, plot_title, diverging_title):
     word_scores_df.to_csv(csv_save_path, index=False)
     logging.info(f"✅ Saved top word scores to {csv_save_path}")
 
-    plot_diverging_words(df, tfidf, feature_names, top_indices, text_col, diverging_title)
+    plot_diverging_words(
+        df, tfidf, feature_names, top_indices, text_col, diverging_title
+    )
+
 
 def run_cat_vs_dog():
     logging.info("🚀 Starting Cat vs Dog Diverging Style Analysis...")
@@ -131,5 +145,7 @@ def run_cat_vs_dog():
 
     df = load_and_prepare_data(cat_path, dog_path)
 
-    run_style_model(df, "style_text", "Top Adjectives", "Diverging Adjective Usage (Dog - Cat)")
+    run_style_model(
+        df, "style_text", "Top Adjectives", "Diverging Adjective Usage (Dog - Cat)"
+    )
     run_style_model(df, "verb_text", "Top Verbs", "Diverging Verb Usage (Dog - Cat)")

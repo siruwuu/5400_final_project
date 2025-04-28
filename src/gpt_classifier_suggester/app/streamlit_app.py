@@ -1,6 +1,7 @@
 # streamlit_app.py
 
-import sys, os
+import sys
+import os
 import logging
 import streamlit as st
 
@@ -17,12 +18,14 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler(os.path.join(log_dir, "streamlit_app.log"), mode='a'),
-        logging.StreamHandler()
-    ]
+        logging.FileHandler(os.path.join(log_dir, "streamlit_app.log"), mode="a"),
+        logging.StreamHandler(),
+    ],
 )
 
-st.set_page_config(page_title="Reddit Adoption Post Optimizer", page_icon="🐾", layout="centered")
+st.set_page_config(
+    page_title="Reddit Adoption Post Optimizer", page_icon="🐾", layout="centered"
+)
 
 st.title("🐾 Reddit Adoption Post Optimizer 🐱 🐶")
 
@@ -36,11 +39,15 @@ if st.button("🔍 Analyze & Get Suggestions"):
         pet_type, prob = full_predict(text)
         label = prob >= 0.5  # High engagement if probability >= 50%
 
-        logging.info(f"Prediction completed. Detected pet_type={pet_type}, predicted prob={prob:.4f}")
+        logging.info(
+            f"Prediction completed. Detected pet_type={pet_type}, predicted prob={prob:.4f}"
+        )
 
         st.markdown("---")
         st.markdown(f"### 🐶 Detected Animal Type: `{pet_type}`")
-        st.markdown(f"### 🔮 Predicted Engagement: {'🟢 High' if label else '🔴 Low'} ({prob:.2%})")
+        st.markdown(
+            f"### 🔮 Predicted Engagement: {'🟢 High' if label else '🔴 Low'} ({prob:.2%})"
+        )
 
         st.markdown("---")
         st.markdown("### 💡 Suggestions to Improve Your Post")

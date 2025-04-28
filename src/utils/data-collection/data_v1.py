@@ -64,7 +64,7 @@ load_dotenv()  # Load environment variables from .env
 reddit = praw.Reddit(
     client_id=os.getenv("REDDIT_CLIENT_ID"),
     client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-    user_agent=os.getenv("REDDIT_USER_AGENT")
+    user_agent=os.getenv("REDDIT_USER_AGENT"),
 )
 
 # ===== Step 2: Configuration =====
@@ -77,26 +77,64 @@ print_interval = 50  # Print progress every N posts
 
 # ===== Step 3: Adoption-related keywords =====
 adoption_keywords = [
-    "adopt", "adoption", "adopted", "adopting",
-    "rehome", "re-home", "rescue", "rescued",
-    "foster", "forever home", "shelter",
-    "looking for home", "needs home", "new home",
-    "available", "seeking", "help", "please"
+    "adopt",
+    "adoption",
+    "adopted",
+    "adopting",
+    "rehome",
+    "re-home",
+    "rescue",
+    "rescued",
+    "foster",
+    "forever home",
+    "shelter",
+    "looking for home",
+    "needs home",
+    "new home",
+    "available",
+    "seeking",
+    "help",
+    "please",
 ]
 
 # Cat-related keywords
 cat_keywords = [
-    "cat", "cats", "kitten", "kittens", "kitty", 
-    "feline", "tabby", "calico", "siamese", "persian",
-    "she-cat", "tomcat", "meow"
+    "cat",
+    "cats",
+    "kitten",
+    "kittens",
+    "kitty",
+    "feline",
+    "tabby",
+    "calico",
+    "siamese",
+    "persian",
+    "she-cat",
+    "tomcat",
+    "meow",
 ]
 
 # Dog-related keywords
 dog_keywords = [
-    "dog", "dogs", "puppy", "puppies", "pup", "pooch",
-    "canine", "hound", "retriever", "shepherd", "terrier",
-    "labrador", "beagle", "collie", "poodle", "bark", "woof"
+    "dog",
+    "dogs",
+    "puppy",
+    "puppies",
+    "pup",
+    "pooch",
+    "canine",
+    "hound",
+    "retriever",
+    "shepherd",
+    "terrier",
+    "labrador",
+    "beagle",
+    "collie",
+    "poodle",
+    "bark",
+    "woof",
 ]
+
 
 def is_adoption_related(text):
     """Check if the text is adoption-related (lenient matching)"""
@@ -105,6 +143,7 @@ def is_adoption_related(text):
     text = text.lower()
     return any(keyword in text for keyword in adoption_keywords)
 
+
 def is_cat_related(text):
     """Check if the text is cat-related"""
     if not isinstance(text, str):
@@ -112,12 +151,14 @@ def is_cat_related(text):
     text = text.lower()
     return any(keyword in text for keyword in cat_keywords)
 
+
 def is_dog_related(text):
     """Check if the text is dog-related"""
     if not isinstance(text, str):
         return False
     text = text.lower()
     return any(keyword in text for keyword in dog_keywords)
+
 
 # ===== Step 4: Initialize storage =====
 cat_posts = []
@@ -169,9 +210,13 @@ for sub in cat_subreddits:
                         "score": post.score,
                         "upvote_ratio": post.upvote_ratio,
                         "num_comments": post.num_comments,
-                        "created_utc": datetime.fromtimestamp(post.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
+                        "created_utc": (
+                            datetime.fromtimestamp(post.created_utc).strftime(
+                                "%Y-%m-%d %H:%M:%S"
+                            )
+                        ),
                         "url": f"https://reddit.com{post.permalink}",
-                        "pet_type": "cat"
+                        "pet_type": "cat",
                     }
                     cat_posts.append(post_info)
                     posts_collected += 1
@@ -181,7 +226,9 @@ for sub in cat_subreddits:
                         post.comments.replace_more(limit=0)
                         comment_count = 0
 
-                        for comment in sorted(post.comments.list(), key=lambda x: x.score, reverse=True):
+                        for comment in sorted(
+                            post.comments.list(), key=lambda x: x.score, reverse=True
+                        ):
                             if comment_count >= max_comments_per_post:
                                 break
                             if comment.body in ["[removed]", "[deleted]"]:
@@ -192,8 +239,12 @@ for sub in cat_subreddits:
                                 "subreddit": sub,
                                 "body": comment.body,
                                 "score": comment.score,
-                                "created_utc": datetime.fromtimestamp(comment.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
-                                "pet_type": "cat"
+                                "created_utc": (
+                                    datetime.fromtimestamp(
+                                        comment.created_utc
+                                    ).strftime("%Y-%m-%d %H:%M:%S")
+                                ),
+                                "pet_type": "cat",
                             }
                             cat_comments.append(comment_info)
                             comment_count += 1
@@ -201,14 +252,24 @@ for sub in cat_subreddits:
                         print(f"Failed to fetch comments: {e}")
 
                     if posts_collected % print_interval == 0:
-                        print(f"  ... Collected {posts_collected} cat-related posts (Checked {posts_checked})")
-                        print(f"      Total: Cats: {cat_posts_count}, Dogs: {dog_posts_count}")
+                        print(
+                            f"  ... Collected {posts_collected} cat-related posts (Checked {posts_checked})"
+                        )
+                        print(
+                            f"      Total: Cats: {cat_posts_count}, Dogs: {dog_posts_count}"
+                        )
 
                     if cat_posts_count % 500 == 0:
                         os.makedirs("data", exist_ok=True)
-                        pd.DataFrame(cat_posts).to_csv(f"data/cat_posts_temp_{cat_posts_count}.csv", index=False)
-                        pd.DataFrame(cat_comments).to_csv(f"data/cat_comments_temp_{cat_posts_count}.csv", index=False)
-                        print(f"  Temporary save: {cat_posts_count} cat posts, {len(cat_comments)} comments")
+                        pd.DataFrame(cat_posts).to_csv(
+                            f"data/cat_posts_temp_{cat_posts_count}.csv", index=False
+                        )
+                        pd.DataFrame(cat_comments).to_csv(
+                            f"data/cat_comments_temp_{cat_posts_count}.csv", index=False
+                        )
+                        print(
+                            f"  Temporary save: {cat_posts_count} cat posts, {len(cat_comments)} comments"
+                        )
 
                 if cat_posts_count >= target_posts_per_type:
                     break
@@ -261,9 +322,13 @@ for sub in dog_subreddits:
                         "score": post.score,
                         "upvote_ratio": post.upvote_ratio,
                         "num_comments": post.num_comments,
-                        "created_utc": datetime.fromtimestamp(post.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
+                        "created_utc": (
+                            datetime.fromtimestamp(post.created_utc).strftime(
+                                "%Y-%m-%d %H:%M:%S"
+                            )
+                        ),
                         "url": f"https://reddit.com{post.permalink}",
-                        "pet_type": "dog"
+                        "pet_type": "dog",
                     }
                     dog_posts.append(post_info)
                     posts_collected += 1
@@ -273,7 +338,9 @@ for sub in dog_subreddits:
                         post.comments.replace_more(limit=0)
                         comment_count = 0
 
-                        for comment in sorted(post.comments.list(), key=lambda x: x.score, reverse=True):
+                        for comment in sorted(
+                            post.comments.list(), key=lambda x: x.score, reverse=True
+                        ):
                             if comment_count >= max_comments_per_post:
                                 break
                             if comment.body in ["[removed]", "[deleted]"]:
@@ -284,8 +351,12 @@ for sub in dog_subreddits:
                                 "subreddit": sub,
                                 "body": comment.body,
                                 "score": comment.score,
-                                "created_utc": datetime.fromtimestamp(comment.created_utc).strftime('%Y-%m-%d %H:%M:%S'),
-                                "pet_type": "dog"
+                                "created_utc": (
+                                    datetime.fromtimestamp(
+                                        comment.created_utc
+                                    ).strftime("%Y-%m-%d %H:%M:%S")
+                                ),
+                                "pet_type": "dog",
                             }
                             dog_comments.append(comment_info)
                             comment_count += 1
@@ -293,14 +364,24 @@ for sub in dog_subreddits:
                         print(f"Failed to fetch comments: {e}")
 
                     if posts_collected % print_interval == 0:
-                        print(f"  ... Collected {posts_collected} dog-related posts (Checked {posts_checked})")
-                        print(f"      Total: Cats: {cat_posts_count}, Dogs: {dog_posts_count}")
+                        print(
+                            f"  ... Collected {posts_collected} dog-related posts (Checked {posts_checked})"
+                        )
+                        print(
+                            f"      Total: Cats: {cat_posts_count}, Dogs: {dog_posts_count}"
+                        )
 
                     if dog_posts_count % 500 == 0:
                         os.makedirs("data", exist_ok=True)
-                        pd.DataFrame(dog_posts).to_csv(f"data/dog_posts_temp_{dog_posts_count}.csv", index=False)
-                        pd.DataFrame(dog_comments).to_csv(f"data/dog_comments_temp_{dog_posts_count}.csv", index=False)
-                        print(f"  Temporary save: {dog_posts_count} dog posts, {len(dog_comments)} comments")
+                        pd.DataFrame(dog_posts).to_csv(
+                            f"data/dog_posts_temp_{dog_posts_count}.csv", index=False
+                        )
+                        pd.DataFrame(dog_comments).to_csv(
+                            f"data/dog_comments_temp_{dog_posts_count}.csv", index=False
+                        )
+                        print(
+                            f"  Temporary save: {dog_posts_count} dog posts, {len(dog_comments)} comments"
+                        )
 
                 if dog_posts_count >= target_posts_per_type:
                     break
@@ -341,6 +422,8 @@ dog_avg = len(dog_comments) / len(dog_posts) if len(dog_posts) > 0 else 0
 print("\nAverage comments per post:")
 print(f"- Cats: {cat_avg:.2f}")
 print(f"- Dogs: {dog_avg:.2f}")
-print(f"- Overall: {len(all_comments) / len(all_posts) if len(all_posts) > 0 else 0:.2f}")
+print(
+    f"- Overall: {len(all_comments) / len(all_posts) if len(all_posts) > 0 else 0:.2f}"
+)
 
 print("\nFiles saved in the data folder.")

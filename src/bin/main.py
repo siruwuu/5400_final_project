@@ -21,10 +21,11 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
-        logging.FileHandler(os.path.join(log_dir, "main.log"), mode='a'),
-        logging.StreamHandler()
-    ]
+        logging.FileHandler(os.path.join(log_dir, "main.log"), mode="a"),
+        logging.StreamHandler(),
+    ],
 )
+
 
 def main():
     parser = argparse.ArgumentParser(description="Run engagement analysis tasks")
@@ -32,7 +33,7 @@ def main():
         "--task",
         choices=["regression", "classifier", "cat_vs_dog", "all"],
         default="all",
-        help="Which task to run: regression, classifier, cat_vs_dog, or all"
+        help="Which task to run: regression, classifier, cat_vs_dog, or all",
     )
     args = parser.parse_args()
 
@@ -58,6 +59,6 @@ def main():
         logging.info("🔁 Running Cat vs Dog Diverging Style Analysis...")
         run_cat_vs_dog()
 
+
 if __name__ == "__main__":
     main()
-

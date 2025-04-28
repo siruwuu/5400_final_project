@@ -4,3 +4,4 @@ data/
 src/*.egg-info
 *.pyc 
 __pycache__/
+.ruff_cache

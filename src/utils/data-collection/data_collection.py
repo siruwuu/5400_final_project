@@ -10,8 +10,8 @@ of adoption-related content. The script performs the following operations:
   - Establishes a connection to the Reddit API using PRAW library
 
 2. Data Collection Configuration:
-  - Targets 10 pet-related subreddits including: "cats", "dogs", "CatAdvice", 
-    "DogAdvice", "PetAdvice", "Adoptapet", "AdoptMyPet", "puppyAdoption", 
+  - Targets 10 pet-related subreddits including: "cats", "dogs", "CatAdvice",
+    "DogAdvice", "PetAdvice", "Adoptapet", "AdoptMyPet", "puppyAdoption",
     "rescuedogs", and "aww"
   - Processes up to 2000 submissions per subreddit
   - Outputs progress updates every 100 posts
@@ -58,27 +58,45 @@ load_dotenv()
 reddit = praw.Reddit(
     client_id=os.getenv("REDDIT_CLIENT_ID"),
     client_secret=os.getenv("REDDIT_CLIENT_SECRET"),
-    user_agent=os.getenv("REDDIT_USER_AGENT")
+    user_agent=os.getenv("REDDIT_USER_AGENT"),
 )
 
 # ===== Step 2: Configuration =====
 subreddits = [
-    "cats", "dogs", "CatAdvice", "DogAdvice", "PetAdvice",
-    "Adoptapet", "AdoptMyPet", "puppyAdoption", "rescuedogs", "aww"
+    "cats",
+    "dogs",
+    "CatAdvice",
+    "DogAdvice",
+    "PetAdvice",
+    "Adoptapet",
+    "AdoptMyPet",
+    "puppyAdoption",
+    "rescuedogs",
+    "aww",
 ]
-num_submissions_per_sub = 2000  
-print_interval = 100  
+num_submissions_per_sub = 2000
+print_interval = 100
 
 # ===== Step 3: Adoption-related keyword list =====
 adoption_keywords = [
-    "adopt", "adoption", "adopted", "adopting",
-    "rehome", "re-home", "rescue", "rescued",
-    "foster", "forever home", "shelter"
+    "adopt",
+    "adoption",
+    "adopted",
+    "adopting",
+    "rehome",
+    "re-home",
+    "rescue",
+    "rescued",
+    "foster",
+    "forever home",
+    "shelter",
 ]
+
 
 def is_adoption_related(text):
     text = text.lower()
     return any(keyword in text for keyword in adoption_keywords)
+
 
 # ===== Step 4: Initialize storage =====
 all_comments = []
@@ -96,16 +114,22 @@ for sub in subreddits:
                 for comment in post.comments.list():
                     if comment.body in ["[removed]", "[deleted]"]:
                         continue
-                    all_comments.append({
-                        "subreddit": sub,
-                        "post_id": post.id,
-                        "post_title": post.title,
-                        "comment_id": comment.id,
-                        "body": comment.body,
-                        "score": comment.score,
-                        "created_utc": datetime.utcfromtimestamp(comment.created_utc).isoformat(),
-                        "permalink": f"https://www.reddit.com{post.permalink}"
-                    })
+                    all_comments.append(
+                        {
+                            "subreddit": sub,
+                            "post_id": post.id,
+                            "post_title": post.title,
+                            "comment_id": comment.id,
+                            "body": comment.body,
+                            "score": comment.score,
+                            "created_utc": (
+                                datetime.utcfromtimestamp(
+                                    comment.created_utc
+                                ).isoformat()
+                            ),
+                            "permalink": f"https://www.reddit.com{post.permalink}",
+                        }
+                    )
             except Exception as e:
                 print(f"Failed to fetch comments for post: {e}")
                 continue
@@ -114,7 +138,6 @@ for sub in subreddits:
                 print(f"  ... processed {idx} posts")
 
             time.sleep(1)
-
 
     except Exception as e:
         print(f"Error in r/{sub}: {e}")
@@ -129,4 +152,6 @@ print(f"\nAll comments saved: {len(all_df)} rows → data/raw-data/all_comments.
 # ===== Step 7: Filter adoption-related comments =====
 adoption_df = all_df[all_df["body"].apply(is_adoption_related)]
 adoption_df.to_csv("data/raw-data/adoption_comments.csv", index=False)
-print(f"Adoption-related comments saved: {len(adoption_df)} rows → data/raw-data/adoption_comments.csv")
+print(
+    f"Adoption-related comments saved: {len(adoption_df)} rows → data/raw-data/adoption_comments.csv"
+)
