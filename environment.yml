@@ -1,41 +1,23 @@
-name: reddit-nlp-engagement
+name: reddit-engagement-analyzer
 channels:
-  - conda-forge
   - defaults
-
+  - conda-forge
 dependencies:
-  - python=3.9
+  - python=3.10
   - pandas
   - numpy
-  - matplotlib
-  - seaborn
   - scikit-learn
-  - xgboost
-  - nltk
-  - spacy
-  - shap
-  - geopandas
-  - pyproj
+  - matplotlib
   - emoji
-  - statsmodels
-  - wordcloud
-  - jupyter
-  - streamlit
-  - python-dotenv
+  - pytest
+  - ipykernel
+  - seaborn
+  - altair
+  - pyyaml
+  - black
+  - ruff
   - pip
   - pip:
-      - torch
-      - torchvision
-      - ydata-profiling
-      - plotly
-      - altair
-      - rich
-      - typer
-      - regex
-      - us
-      - phik
-      - rapidfuzz
-      - black
-      - ruff
-      - pytest
-      - en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.8.0/en_core_web_sm-3.8.0-py3-none-any.whl
+      - openai>=1.0
+      - streamlit>=1.20
+      - python-dotenv>=1.0.0

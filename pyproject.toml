@@ -1,47 +1,33 @@
-[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "reddit-engagement-analyzer"
 version = "0.1.0"
-description = "This project analyzes how different linguistic features—beyond just adjectives—affect user engagement in Reddit pet adoption posts, and builds tools to improve post effectiveness."
-readme = "README.md"
-requires-python = ">=3.9"
-
+description = "Analyze and predict Reddit pet adoption post engagement using machine learning and linguistic features."
 authors = [
-  { name = "Jiahui Liu", email = "jiahui@example.com" },
-  { name = "Siru Wu", email = "sw1430@georgetown.edu" }
+  { name = "Jiahui Liu" },
+  { name = "Siru Wu" },
+  { name = "Yiqin Zhou" },
+  { name = "Jiaqi Wei" }
 ]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
 
 dependencies = [
-  "pandas",
-  "numpy",
-  "matplotlib",
-  "scikit-learn",
-  "emoji",
-  "pytest",
-  "xgboost",
-  "nltk",
-  "spacy",
-  "streamlit",
-  "python-dotenv",
-  "shap"
-]
-
-[project.optional-dependencies]
-dev = [
-  "pytest",
-  "jupyter",
-  "black",
-  "ruff"
+    "pandas",
+    "numpy",
+    "scikit-learn",
+    "matplotlib",
+    "emoji",
+    "python-dotenv",
+    "streamlit",
+    "openai",
+    "black",
+    "ruff"
 ]
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+packages = ["mod", "gpt_classifier_suggester", "gpt_classifier_suggester.app", "gpt_classifier_suggester.gpt", "gpt_classifier_suggester.prediction"]
 
-[tool.setuptools.packages.find]
-where = ["src"]
-
-[tool.pytest.ini_options]
-pythonpath = ["src"]
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
