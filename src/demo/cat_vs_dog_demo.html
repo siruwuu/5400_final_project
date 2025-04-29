@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Are You a Cat 🐱 Person or a Dog 🐶 Person?</title>
+  <style>
+    body {
+      font-family: 'Helvetica Neue', sans-serif;
+      padding: 40px;
+      max-width: 700px;
+      margin: auto;
+      background-color: #f0f4f8;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    p.intro {
+      font-size: 1.1em;
+      text-align: center;
+      color: #555;
+      margin-bottom: 40px;
+    }
+
+    .question {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .pink { background-color: #fff0f5; }
+    .blue { background-color: #f0f8ff; }
+
+    .question label {
+      display: block;
+      margin: 8px 0;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 1em;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: block;
+      margin: 30px auto 10px;
+    }
+
+    #result {
+      margin-top: 20px;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      font-size: 1.2em;
+      text-align: center;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Are You a Cat 🐱 Person or a Dog 🐶 Person?</h1>
+
+  <p class="intro">
+    This playful tool is powered by real language from Reddit pet adoption posts.  
+    Just pick the choices that best match your personality, click <strong>Submit</strong>, and we’ll give you a fun result!
+  </p>
+
+  <form id="quizForm">
+    <div class="question pink">
+      <strong>1. What kind of personality do you prefer in a pet?</strong>
+      <label><input type="radio" name="q1" value="sweet"> Sweet (gentle and loving)</label>
+      <label><input type="radio" name="q1" value="feral"> Feral (independent and wild)</label>
+    </div>
+
+    <div class="question blue">
+      <strong>2. How do you want your pet to interact with you?</strong>
+      <label><input type="radio" name="q2" value="happy"> Happy (enthusiastic and energetic)</label>
+      <label><input type="radio" name="q2" value="available"> Available (quietly present)</label>
+    </div>
+
+    <div class="question pink">
+      <strong>3. What role do you see yourself playing?</strong>
+      <label><input type="radio" name="q3" value="train"> Train (active guide/partner)</label>
+      <label><input type="radio" name="q3" value="rehome"> Rehome (gentle caretaker)</label>
+    </div>
+
+    <div class="question blue">
+      <strong>4. How would you describe your emotional connection?</strong>
+      <label><input type="radio" name="q4" value="love"> Love (open affection)</label>
+      <label><input type="radio" name="q4" value="thank"> Thank (quiet appreciation)</label>
+    </div>
+
+    <button type="button" onclick="calculateResult()">Submit</button>
+  </form>
+
+  <div id="result"></div>
+
+  <script>
+    const wordScores = {
+      sweet: {dog: 0.0284, cat: 0.0214},
+      feral: {dog: 0.0007, cat: 0.0147},
+      happy: {dog: 0.0213, cat: 0.0208},
+      available: {dog: 0.0141, cat: 0.0234},
+      train: {dog: 0.0221, cat: 0.004},
+      rehome: {dog: 0.022, cat: 0.0297},
+      love: {dog: 0.0374, cat: 0.0297},
+      thank: {dog: 0.0174, cat: 0.0326}
+    };
+
+    function calculateResult() {
+      const selectedWords = [];
+      for (let i = 1; i <= 4; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selected) selectedWords.push(selected.value);
+      }
+
+      const resultDiv = document.getElementById("result");
+      if (selectedWords.length < 4) {
+        resultDiv.textContent = "Please answer all questions before submitting.";
+      } else {
+        let catTotal = 0;
+        let dogTotal = 0;
+
+        selectedWords.forEach(word => {
+          catTotal += wordScores[word].cat;
+          dogTotal += wordScores[word].dog;
+        });
+
+        const total = catTotal + dogTotal;
+        const catPct = Math.round((catTotal / total) * 100);
+        const dogPct = 100 - catPct;
+
+        resultDiv.textContent = `You might be ${catPct}% a cat person 😺 and ${dogPct}% a dog person 🐶.`;
+      }
+
+      resultDiv.style.display = "block";
+    }
+  </script>
+
+</body>
+</html>

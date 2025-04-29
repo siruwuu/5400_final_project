@@ -75,28 +75,32 @@ The classifier plays a crucial role in guiding GPT-4 to provide specific suggest
 │
 ├── src/
 │   ├── bin/
-│   │   └── main.py            # CLI entry point for data & model pipelines
-│   ├── mod/
+│   │   └── main.py                         # CLI entry point for model pipelines
+│   ├── demo/
+│   │   └── cat_vs_dog_demo.html            
+│   ├── mod/                                # Model Using
 │   │   ├── new_engagement_regression.py
 │   │   ├── new_engagement_classifier.py
-│   │   └── cat_vs_dog.py     # Word suggestion logic
-│   ├── utils/
-│   │   ├── data-collection/   # Reddit crawling and filtering scripts
+│   │   └── cat_vs_dog.py                   # Word suggestion logic
+│   ├── utils/                              # Data collection and preprecessing
+│   │   ├── data-collection/                # Reddit crawling and filtering scripts
 │   │   └── data_preprocessing/
 │   │       └── preprocessing.py
-│   ├── gpt_classifier_suggester/
+│   ├── gpt_classifier_suggester/           # Demo for impove and suggest posts
 │   │   ├── app/streamlit_app.py            # Streamlit app frontend
 │   │   ├── gpt/suggestion.py               # Suggestion logic (GPT-powered or custom)
 │   │   ├── model/.pkl                      # Trained pipelines (.pkl)
 │   │   └── prediction/predictor.py         # Prediction backend
-│   └── img/                   # Visuals: ROC curves, feature importance, reports
+│   └── img/                                # Visuals: ROC curves, feature importance, reports
 │
 ├── tests/
-│   ├── test_cat_vs_dog.py               # Unit tests
-│   └── test_part1.py                # Test outputs: plots & CSVs
+│   ├── output/
+│   ├── data_split.py 
+│   ├── test_cat_vs_dog.py                  # Unit tests
+│   └── test_part1.py                       # Test outputs: plots & CSVs
 │
 ├── logs/
-├── .env                        # ignored
+├── .env                                    # ignored the GPT API
 ├── README.md
 ├── pyproject.toml
 ├── environment.yml
@@ -108,12 +112,12 @@ The classifier plays a crucial role in guiding GPT-4 to provide specific suggest
 ## Architecture Overview
 ![Architecture Diagram](src/img/overview.jpeg)
 - src/mod/:
-- - new_engagement_classifier.py: Train classifiers to predict high/low engagement.
+- - new_engagement_classifier.py: Train classifiers to predict high/low engagement. Then train the model.pkl and save to gpt_classifier_suggester/model/.pkl
 - - new_engagement_regression.py: Regression analysis for predicting engagement scores.
 - - cat_vs_dog.py: Compare linguistic style divergence between cat and dog posts.
 
 - src/gpt_classifier_suggester/:
-- - gpt/suggestion.py: Generate GPT suggestions.
+- - gpt/suggestion.py: Generate GPT suggestions by using classifier model.
 - - prediction/predictor.py: Feature engineering + prediction pipeline.
 - - app/streamlit_app.py: Interactive web app for Reddit optimization.
 
@@ -165,7 +169,9 @@ python src/bin/main.py --task all
 streamlit run src/gpt_classifier_suggester/app/streamlit_app.py
 ```
 ### Run tests:
+First run tests/data_split.py to get test data
 
+Then 
 ```bash
 # Rub tests
 pytest tests/
