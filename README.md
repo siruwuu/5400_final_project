@@ -110,7 +110,7 @@ The classifier plays a crucial role in guiding GPT-4 to provide specific suggest
 ---
 
 ## Architecture Overview
-![Architecture Diagram](src/img/overview.jpeg)
+![Architecture Diagram](https://github.com/siruwuu/5400_final_project/raw/main/src/img/overview.jpeg)
 - src/mod/:
 - - new_engagement_classifier.py: Train classifiers to predict high/low engagement. Then train the model.pkl and save to gpt_classifier_suggester/model/.pkl
 - - new_engagement_regression.py: Regression analysis for predicting engagement scores.
