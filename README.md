@@ -110,7 +110,7 @@ The classifier plays a crucial role in guiding GPT-4 to provide specific suggest
 ---
 
 ## Architecture Overview
-![Architecture Diagram](src/img/overview.jpeg)
+![Architecture Diagram](src/img/overview.png)
 
 - src/utils:
 - - data-collection/: Collect the data using Reddit API
