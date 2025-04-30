@@ -1,3 +1,52 @@
+"""
+This module performs the engagement classification task on Reddit posts related to cat and dog adoption.
+It classifies posts into high and low engagement categories using two machine learning models: 
+Logistic Regression and Random Forest.
+
+### Functions:
+- `run_engagement_classification(data_dir="data", save_dir="src/img", model_dir="src/gpt_classifier_suggester/model", save_model=True)`:
+    Orchestrates the process of data loading, preprocessing, model training, evaluation, and saving the model and plots.
+    - Loads cat and dog posts.
+    - Preprocesses the data, creating structured features and labels based on engagement scores.
+    - Trains and evaluates Logistic Regression and Random Forest models for engagement classification.
+    - Saves the models and plots, including ROC curves and feature importance.
+
+- `preprocess_posts(df, pet_type=None)`:
+    Preprocesses the Reddit posts by extracting features like engagement score, number of adjectives, verbs, emojis, and more.
+    - Adds several new columns for features that are useful for classification.
+    - Computes engagement score and labels high/low engagement based on quantiles.
+
+- `label_high_engagement(df)`:
+    Labels the posts as high or low engagement based on the 75th and 50th quantiles of the engagement score.
+
+- `run_classifier(df, label="Posts", model="logistic", save_prefix="cats", save_model=True, model_dir_absolute=None)`:
+    Runs the selected classifier (Logistic Regression or Random Forest) on the dataset, evaluates performance, and saves the model and results.
+    - Performs train-test split.
+    - Trains the model using TF-IDF vectorization for text features and additional structured features.
+    - Evaluates the model on the test set, displaying classification reports, confusion matrix, and ROC-AUC score.
+    - Saves ROC curve and feature importance plots.
+
+### Data Preprocessing:
+- Adds features such as sentiment score, number of adjectives, number of verbs, emojis, urgency words, pronouns, title length, etc.
+- Labels posts as high engagement if their engagement score is in the top 25% and low engagement if in the bottom 50%.
+
+### Model Training:
+- Logistic Regression and Random Forest classifiers are used to predict high vs. low engagement.
+- The models are trained using a combination of text features (processed using TF-IDF) and structured features (such as number of emojis, adjectives, etc.).
+
+### Model Evaluation:
+- The models are evaluated using:
+    - Classification report (precision, recall, F1-score)
+    - Confusion matrix
+    - ROC-AUC score and ROC curve
+    - Feature importance for Random Forest
+
+### Model Saving:
+- The trained models are saved as pickled files for later use.
+- Plots (ROC curves and feature importance) are saved to the specified directory.
+
+"""
+
 import os
 import re
 import emoji
@@ -26,6 +75,18 @@ def run_engagement_classification(
     model_dir="src/gpt_classifier_suggester/model",
     save_model=True,
 ):
+    """
+    Orchestrates the entire engagement classification process by loading the cat and dog posts datasets,
+    preprocessing the data, training Logistic Regression and Random Forest classifiers, evaluating model
+    performance, and saving the models and evaluation plots.
+
+    Args:
+        data_dir (str): The directory where the input data (cat and dog posts) is stored.
+        save_dir (str): The directory where the output plots (e.g., ROC curve) will be saved.
+        model_dir (str): The directory to save the trained model pipelines.
+        save_model (bool): Whether to save the trained models to disk.
+
+    """
     logging.info("🚀 Starting run_engagement_classification...")
 
     current_path = pathlib.Path(__file__).resolve()
@@ -46,6 +107,17 @@ def run_engagement_classification(
         raise e
 
     def preprocess_posts(df, pet_type=None):
+        """
+        Preprocesses Reddit posts by extracting structured features (e.g., engagement score, number of adjectives, verbs, emojis)
+        and text-based features (e.g., sentiment score, presence of urgency keywords, etc.).
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the posts to preprocess.
+            pet_type (str): The type of pet ("cat" or "dog").
+
+        Returns:
+            pd.DataFrame: The processed DataFrame with new features.
+        """
         logging.info(f"🔄 Preprocessing posts for {pet_type}...")
         df["engagement_score"] = df["score"] + 0.5 * df["num_comments"]
         df["num_adjectives"] = df["adjectives"].apply(
@@ -70,6 +142,15 @@ def run_engagement_classification(
         df["title_length"] = df["title"].apply(lambda x: len(str(x)))
 
         def contains_money(text):
+            """
+            Checks if the text contains any keywords related to money or donations.
+
+            Args:
+                text (str): The text to check for money-related keywords.
+
+            Returns:
+                int: 1 if the text contains money-related keywords, 0 otherwise.
+            """
             text = str(text).lower()
             return int(
                 any(
@@ -91,6 +172,15 @@ def run_engagement_classification(
     dogs_posts = preprocess_posts(dogs_posts, "dog")
 
     def label_high_engagement(df):
+        """
+        Labels the posts as having high or low engagement based on the engagement score's quantiles.
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing posts with an engagement score.
+
+        Returns:
+            pd.DataFrame: The DataFrame with a new column 'high_engagement' (1 for high, 0 for low).
+        """
         logging.info("🏷️ Labeling high/low engagement...")
         q75 = df["engagement_score"].quantile(0.75)
         q50 = df["engagement_score"].quantile(0.50)
@@ -110,6 +200,18 @@ def run_engagement_classification(
         save_model=True,
         model_dir_absolute=None,
     ):
+        """
+        Runs a classifier (Logistic Regression or Random Forest) on the posts dataset to predict high/low engagement.
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the posts and features.
+            label (str): The label for the posts (e.g., "Cats" or "Dogs").
+            model (str): The model to use ("logistic" for Logistic Regression, "rf" for Random Forest).
+            save_prefix (str): Prefix for saving the model and plot files.
+            save_model (bool): Whether to save the trained model.
+            model_dir_absolute (pathlib.Path): Directory where the model will be saved.
+
+        """
         logging.info(f"🚦 Start running classifier: {label} ({model})")
 
         structured_features = [

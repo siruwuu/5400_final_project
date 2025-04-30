@@ -20,6 +20,15 @@ PRONOUNS = ["you", "your", "we", "us"]
 
 
 def run_regression_analysis(data_dir="data", save_dir="src/img"):
+    """
+    Orchestrates the regression analysis process for both post and comment datasets.
+    It loads the data, processes it, runs regression analysis to predict engagement score,
+    and saves the results and feature importance plots.
+
+    Args:
+        data_dir (str): The directory where the input data (posts and comments) is located.
+        save_dir (str): The directory where the output plots and coefficients will be saved.
+    """
     logging.info("🔁 Running Regression Analysis...")
 
     save_dir_absolute = Path(save_dir).resolve()
@@ -53,6 +62,13 @@ def run_regression_analysis(data_dir="data", save_dir="src/img"):
 
 
 def engineer_post_features(df):
+    """
+    Engineers additional features for the Reddit posts dataset, such as engagement score,
+    number of adjectives, verbs, emojis, urgency-related words, pronouns, and more.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the Reddit posts.
+    """
     df["engagement_score"] = df["score"] + 0.5 * df["num_comments"]
     df["num_adjectives"] = df["adjectives"].apply(
         lambda x: len(eval(x)) if pd.notnull(x) else 0
@@ -73,6 +89,16 @@ def engineer_post_features(df):
 
 
 def preprocess_comments(df):
+    """
+    Preprocesses the comments data by extracting features such as the number of adjectives,
+    verbs, emojis, urgency-related words, pronouns, etc.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the Reddit comments.
+
+    Returns:
+        pd.DataFrame: The processed DataFrame with new features.
+    """
     df["num_adjectives"] = df["adjectives"].apply(
         lambda x: len(eval(x)) if pd.notnull(x) else 0
     )
@@ -90,6 +116,15 @@ def preprocess_comments(df):
 
 
 def contains_money(text):
+    """
+    Checks if the text contains any money-related keywords or symbols.
+
+    Args:
+        text (str): The text to check for money-related keywords.
+
+    Returns:
+        int: 1 if the text contains money-related keywords, 0 otherwise.
+    """
     money_keywords = ["donation", "donate", "pledge", "$", "fund", "raise"]
     text = str(text).lower()
     return int(
@@ -98,6 +133,15 @@ def contains_money(text):
 
 
 def analyze_engagement(df, label="Posts", save_dir=Path("src/img")):
+    """
+    Analyzes the engagement for posts by running a linear regression model to predict
+    the engagement score. It saves the feature coefficients and feature importance plots.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the post data with features and engagement scores.
+        label (str): The label for the dataset (e.g., "Cats Posts" or "Dogs Posts").
+        save_dir (Path): The directory where the results and plots will be saved.
+    """
     feature_columns = [
         "sentiment_score",
         "num_adjectives",
@@ -158,6 +202,15 @@ def analyze_engagement(df, label="Posts", save_dir=Path("src/img")):
 
 
 def analyze_comment_engagement(df, label="Comments", save_dir=Path("src/img")):
+    """
+    Analyzes the engagement for comments by running a linear regression model to predict
+    the score (engagement) of the comments. It saves the feature coefficients and feature importance plots.
+
+    Args:
+        df (pd.DataFrame): The DataFrame containing the comment data with features and scores.
+        label (str): The label for the dataset (e.g., "Cats Comments" or "Dogs Comments").
+        save_dir (Path): The directory where the results and plots will be saved.
+    """
     feature_columns = [
         "sentiment_score",
         "num_adjectives",

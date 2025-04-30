@@ -1,12 +1,34 @@
 # tests/test_pipeline.py
+"""
+This module contains unit tests for the overall data processing pipeline, including regression and classification analysis.
+The tests ensure that both the regression and classification pipelines run without errors, output the expected files,
+and function as intended.
+
+### Functions:
+- `ensure_output_folder`: 
+    A fixture that automatically creates the output folder before any tests are run, ensuring the output directory exists for saving files.
+
+- `test_regression_analysis_runs`: 
+    A smoke test to verify that the regression analysis pipeline runs without errors when applied to test data.
+
+- `test_classification_analysis_runs`: 
+    A smoke test to verify that the classification analysis pipeline runs without errors on the test data.
+
+- `test_output_files_exist`: 
+    Ensures that at least one output file is generated in the output folder after running the pipelines.
+
+- `test_output_formats_are_png_or_csv`: 
+    Verifies that the output files are in PNG or CSV format.
+
+- `test_pipeline_no_save`: 
+    Verifies that the classification pipeline runs correctly without saving the model, ensuring the core pipeline works without outputting saved models.
+"""
 
 import os
 import pytest
 from mod.new_engagement_regression import run_regression_analysis
 from mod.new_engagement_classifier import run_engagement_classification
 
-
-# 自动创建输出文件夹
 @pytest.fixture(scope="session", autouse=True)
 def ensure_output_folder():
     os.makedirs("tests/output", exist_ok=True)

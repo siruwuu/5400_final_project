@@ -318,3 +318,18 @@ weighted avg       0.84      0.84      0.84       978
 2025-04-28 06:45:16,276 - INFO - ✅ Saved top word scores to /Users/jiahuiliu/5400_final_project-4/src/img/top20_word_scores_verb_text.csv
 2025-04-28 06:45:16,276 - INFO - 🖼️ Plotting Diverging Word Usage: Diverging Verb Usage (Dog - Cat)
 2025-04-28 06:45:17,384 - INFO - ✅ Saved diverging plot to /Users/jiahuiliu/5400_final_project-4/src/img/verb_text_diverging_plot.png
+2025-04-30 06:10:30,978 - INFO - 🔁 Running Regression Analysis...
+2025-04-30 06:10:30,978 - INFO - 🔁 Running Regression Analysis...
+2025-04-30 06:10:32,533 - INFO - ✅ Successfully loaded posts and comments data.
+2025-04-30 06:10:34,129 - INFO - 📈 Linear Regression Performance for Cats Posts: RMSE=4527.75, R²=0.006
+2025-04-30 06:10:34,133 - INFO - ✅ Saved feature coefficients to /Users/jiahuiliu/5400_final_project-4/src/img/cats_posts_feature_coefficients.csv
+2025-04-30 06:10:35,279 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/cats_posts_feature_importance.png
+2025-04-30 06:10:35,321 - INFO - 📈 Linear Regression Performance for Dogs Posts: RMSE=991.09, R²=0.005
+2025-04-30 06:10:35,329 - INFO - ✅ Saved feature coefficients to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_posts_feature_coefficients.csv
+2025-04-30 06:10:35,519 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_posts_feature_importance.png
+2025-04-30 06:10:40,517 - INFO - 📈 Linear Regression Performance for Cats Comments: RMSE=452.40, R²=0.001
+2025-04-30 06:10:40,518 - INFO - ✅ Saved feature coefficients to /Users/jiahuiliu/5400_final_project-4/src/img/cats_comments_feature_coefficients.csv
+2025-04-30 06:10:40,695 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/cats_comments_feature_importance.png
+2025-04-30 06:10:40,796 - INFO - 📈 Linear Regression Performance for Dogs Comments: RMSE=79.92, R²=0.010
+2025-04-30 06:10:40,798 - INFO - ✅ Saved feature coefficients to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_comments_feature_coefficients.csv
+2025-04-30 06:10:41,022 - INFO - ✅ Saved feature importance plot to /Users/jiahuiliu/5400_final_project-4/src/img/dogs_comments_feature_importance.png

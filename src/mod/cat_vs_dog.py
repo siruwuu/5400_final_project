@@ -1,4 +1,26 @@
 # src/mod/cat_vs_dog.py
+"""
+This module performs a "Cat vs Dog" analysis on Reddit posts by comparing
+the linguistic styles (adjectives and verbs) used in cat-related vs. dog-related
+posts. The analysis includes:
+1. Data preprocessing and feature extraction.
+2. Training a Random Forest model to identify key linguistic features.
+3. Plotting diverging word usage based on TF-IDF scores.
+
+### Functions:
+- `load_and_prepare_data(cat_path, dog_path)`: 
+    Loads and prepares the datasets for cat and dog posts, including feature extraction and text processing.
+
+- `plot_diverging_words(df, tfidf, feature_names, top_indices, column_name, title)`:
+    Plots a diverging bar chart of the most important words that differentiate cat and dog posts, based on TF-IDF scores.
+
+- `run_style_model(df, text_col, plot_title, diverging_title)`:
+    Trains a Random Forest model to identify important words (adjectives or verbs) for distinguishing between cat and dog posts.
+    Also generates a diverging plot for the top features and saves it.
+
+- `run_cat_vs_dog()`: 
+    Main function that orchestrates the analysis, loading datasets, running the style models, and generating the required outputs.
+"""
 
 import os
 import ast
@@ -11,13 +33,25 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
 
-# 常量设定
+# Constants
 WORDS_TO_EXCLUDE = {"kitten", "puppy"}
 IMG_DIR = pathlib.Path(__file__).resolve().parent.parent / "img"
 os.makedirs(IMG_DIR, exist_ok=True)
 
 
 def load_and_prepare_data(cat_path, dog_path):
+    """
+    Loads and prepares the datasets for cat and dog posts by combining them into a single dataframe,
+    performing feature extraction (e.g., extracting adjectives, verbs, and style text),
+    and creating a target label column.
+
+    Args:
+        cat_path (str): Path to the cat posts CSV file.
+        dog_path (str): Path to the dog posts CSV file.
+
+    Returns:
+        pd.DataFrame: A dataframe containing combined data for both cat and dog posts.
+    """
     logging.info("🔵 Loading and preparing cat and dog datasets...")
 
     try:
@@ -48,6 +82,18 @@ def load_and_prepare_data(cat_path, dog_path):
 
 
 def plot_diverging_words(df, tfidf, feature_names, top_indices, column_name, title):
+    """
+    Plots a diverging bar chart of the most important words that differentiate cat and dog posts
+    based on TF-IDF scores. The plot visualizes the difference in average TF-IDF scores for the top features.
+
+    Args:
+        df (pd.DataFrame): The prepared dataset.
+        tfidf (TfidfVectorizer): The fitted TF-IDF vectorizer.
+        feature_names (list): List of feature names corresponding to the words.
+        top_indices (list): Indices of the top features to be plotted.
+        column_name (str): The text column to analyze (e.g., "style_text" or "verb_text").
+        title (str): The title for the plot.
+    """
     logging.info(f"🖼️ Plotting Diverging Word Usage: {title}")
 
     X = tfidf.transform(df[column_name])
@@ -61,7 +107,7 @@ def plot_diverging_words(df, tfidf, feature_names, top_indices, column_name, tit
         words.append(word)
         diffs.append(dog_avg - cat_avg)
 
-    # 绘图
+    # Plot
     plt.figure(figsize=(10, 6))
     sorted_indices = np.argsort(diffs)
     sorted_words = np.array(words)[sorted_indices]
@@ -81,6 +127,16 @@ def plot_diverging_words(df, tfidf, feature_names, top_indices, column_name, tit
 
 
 def run_style_model(df, text_col, plot_title, diverging_title):
+    """
+    Trains a Random Forest model to identify the top linguistic features (adjectives or verbs)
+    that differentiate cat and dog posts based on TF-IDF scores, and generates a diverging plot.
+
+    Args:
+        df (pd.DataFrame): The dataset containing cat and dog posts.
+        text_col (str): The text column to analyze (e.g., "style_text" or "verb_text").
+        plot_title (str): The title for the plot (e.g., "Top Adjectives").
+        diverging_title (str): The title for the diverging plot (e.g., "Diverging Adjective Usage (Dog - Cat)").
+    """
     logging.info(f"🧠 Training started using column: {text_col}")
 
     X = df[text_col]
@@ -134,6 +190,12 @@ def run_style_model(df, text_col, plot_title, diverging_title):
 
 
 def run_cat_vs_dog():
+    """
+    Main function that orchestrates the entire Cat vs Dog analysis. It loads the data, runs the style model,
+    and generates the diverging plots for adjectives and verbs.
+
+    This function initiates the entire analysis workflow and saves the generated plots and CSV files.
+    """
     logging.info("🚀 Starting Cat vs Dog Diverging Style Analysis...")
 
     current_path = pathlib.Path(__file__).resolve()

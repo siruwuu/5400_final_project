@@ -2,10 +2,9 @@ import os
 from openai import OpenAI
 from dotenv import load_dotenv
 
-# 加载.env环境变量
 load_dotenv()
 
-# 从环境变量中读取 OpenAI API Key
+# From .env read OpenAI API Key
 api_key = os.getenv("OPENAI_API_KEY")
 
 if not api_key:
@@ -13,10 +12,10 @@ if not api_key:
         "❌ OPENAI_API_KEY not found in environment variables. Please set it in your .env file."
     )
 
-# 初始化 OpenAI 客户端
+# Initialize OpenAI
 client = OpenAI(api_key=api_key)
 
-
+# use classifier set suggestions
 def generate_gpt_suggestions(text, pet_type, prob, model_name="gpt-4"):
     prompt = f"""
 You are a Reddit content optimization expert.

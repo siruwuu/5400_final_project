@@ -1,19 +1,42 @@
 # src/bin/main.py
 
+"""
+This script runs various engagement analysis tasks, including regression analysis, 
+classification analysis, and a Cat vs Dog style analysis. The script is designed to be 
+executed from the command line, where the user can choose which task to run.
+
+### Tasks:
+- **regression**: Runs the regression analysis to predict engagement scores based on various features.
+- **classifier**: Runs the classification analysis to classify posts as high or low engagement.
+- **cat_vs_dog**: Runs the Cat vs Dog diverging style analysis, comparing linguistic styles in cat and dog posts.
+- **all**: Runs all the tasks sequentially.
+
+### Command-Line Arguments:
+- `--task`: Specifies the task to run. Choices include:
+  - `regression`: Executes the regression analysis task.
+  - `classifier`: Executes the engagement classification task.
+  - `cat_vs_dog`: Executes the Cat vs Dog style analysis.
+  - `all`: Runs all tasks sequentially.
+
+### Logging:
+- The script logs important information, including task execution status, errors, and results, into a log file (`main.log`) in the `logs` directory.
+
+"""
+
 import argparse
 import os
 import sys
 import logging
 
-# 设定工程路径，确保可以import
+# Set path to make sure import
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-# 引入各模块
+# Use all model
 from mod.new_engagement_regression import run_regression_analysis
 from mod.new_engagement_classifier import run_engagement_classification
 from mod.cat_vs_dog import run_cat_vs_dog
 
-# logging统一设置
+# Set logging
 log_dir = os.path.join(os.path.dirname(__file__), "../../logs")
 os.makedirs(log_dir, exist_ok=True)
 
