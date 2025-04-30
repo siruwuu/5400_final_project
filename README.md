@@ -110,7 +110,12 @@ The classifier plays a crucial role in guiding GPT-4 to provide specific suggest
 ---
 
 ## Architecture Overview
-![Architecture Diagram](https://github.com/siruwuu/5400_final_project/raw/main/src/img/overview.jpeg)
+![Architecture Diagram](src/img/overview.jpeg)
+
+- src/utils:
+- - data-collection/: Collect the data using Reddit API
+- - data-preprocessing/: Preprocess data to divide cats and dogs with comments and posts.
+  
 - src/mod/:
 - - new_engagement_classifier.py: Train classifiers to predict high/low engagement. Then train the model.pkl and save to gpt_classifier_suggester/model/.pkl
 - - new_engagement_regression.py: Regression analysis for predicting engagement scores.
@@ -122,6 +127,9 @@ The classifier plays a crucial role in guiding GPT-4 to provide specific suggest
 - - app/streamlit_app.py: Interactive web app for Reddit optimization.
 
 - tests/: Unit and smoke tests for all modules.
+- - data_split.py: Split the raw data with 20% train data and save to tests/data
+- - test_cat_vs_dog.py: test the model in src/mod/cat_vs_dog.py
+- - test_part1: test the model for src/mod/new_engagement_classifier.py and new_engagement_regression.py
 
 ## Data Source
 
@@ -129,7 +137,7 @@ The project uses preprocessed Reddit data available at:
 
  https://drive.google.com/drive/folders/1kyAefJXVvzBxXt4_EZ2XVnrMzkHcumhn?dmr=1&ec=wgc-drive-hero-goto
 
- Please download and place the folder as data/ in your project root directory.
+ Please use **"preprocessed-data"**, which is the already preprocessed data. Please download and place the folder as **data/** in your project root directory.
 
 ## Installation
 
@@ -179,7 +187,7 @@ pytest tests/
 
 ## Note on API Key for GPT Suggestions
 
-This project uses OpenAI's GPT-4 API to generate language suggestions for improving Reddit adoption posts.
+This project uses OpenAI's GPT-4 API (which uses in src/gpt_classifier_suggester/gpt/suggestion.py) to generate language suggestions for improving Reddit adoption posts.
 To protect security and comply with best practices, the API Key is not hard-coded in the source code.
 Instead, we use a .env file and load the API Key via environment variables.
 
@@ -195,12 +203,10 @@ Before running the Streamlit web app (streamlit_app.py), you must:
 
 ### Key Findings
 
-- Posts containing **urgency keywords** (e.g., "urgent", "help", "last chance") and **community-oriented pronouns** (e.g., "you", "we") are more likely to receive higher engagement.
+- Posts containing **emtional words** (e.g., "adorable", "loving", "friendly") and **community-oriented pronouns** (e.g., "you", "we") are more likely to receive higher engagement.
 - Emotional tone, presence of **adjectives**, and **emojis** positively correlate with higher engagement scores.
 - Linguistic style analysis revealed that **dog posts** tend to use more action-oriented verbs ("running", "jumping"), while **cat posts** favor calmer adjectives ("fluffy", "lazy").
 
 ### Conclusion
 
-Our project successfully demonstrates that Reddit adoption post engagement can be predicted and optimized through linguistic features.
-By combining machine learning classification with GPT-based suggestions, we provide shelters and pet advocates a tool to craft more engaging posts,
-potentially improving adoption success rates.
+Our project successfully demonstrates that Reddit adoption post engagement can be predicted and optimized through linguistic features. By combining machine learning classification with GPT-based suggestions, we provide shelters and pet advocates a tool to craft more engaging posts, potentially improving adoption success rates.
