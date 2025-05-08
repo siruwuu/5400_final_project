@@ -16,7 +16,7 @@ if not api_key:
 client = OpenAI(api_key=api_key)
 
 # use classifier set suggestions
-def generate_gpt_suggestions(text, pet_type, prob, model_name="gpt-4"):
+def generate_gpt_suggestions(text, pet_type, prob, model_name="gpt-3.5-turbo"):
     prompt = f"""
 You are a Reddit content optimization expert.
 
