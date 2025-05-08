@@ -16,6 +16,7 @@ dependencies:
   - pyyaml
   - black
   - ruff
+  - nltk
   - pip
   - pip:
       - openai>=1.0
