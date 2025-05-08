@@ -20,6 +20,13 @@ import pickle
 import pandas as pd
 import re
 import emoji
+import nltk
+
+try:
+    nltk.data.find("sentiment/vader_lexicon.zip")
+except LookupError:
+    nltk.download("vader_lexicon")
+    
 from nltk.sentiment import SentimentIntensityAnalyzer
 
 # Initialize sentiment
